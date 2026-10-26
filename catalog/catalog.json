@@ -1,0 +1,922 @@
+{
+  "version": 2,
+  "tasks": [
+    {
+      "id": "reading",
+      "label": {
+        "es": "Leer",
+        "en": "Reading"
+      }
+    },
+    {
+      "id": "writing",
+      "label": {
+        "es": "Escribir",
+        "en": "Writing"
+      }
+    },
+    {
+      "id": "focus",
+      "label": {
+        "es": "Programar o trabajo de concentración",
+        "en": "Coding or deep focus work"
+      }
+    },
+    {
+      "id": "data",
+      "label": {
+        "es": "Datos o números",
+        "en": "Data or numbers"
+      }
+    },
+    {
+      "id": "calls",
+      "label": {
+        "es": "Llamadas o videollamadas",
+        "en": "Calls or video calls"
+      }
+    },
+    {
+      "id": "meetings",
+      "label": {
+        "es": "Reuniones en persona",
+        "en": "In-person meetings"
+      }
+    },
+    {
+      "id": "creative",
+      "label": {
+        "es": "Diseño o tarea creativa",
+        "en": "Design or creative work"
+      }
+    },
+    {
+      "id": "routine",
+      "label": {
+        "es": "Tareas repetitivas",
+        "en": "Routine tasks"
+      }
+    },
+    {
+      "id": "other",
+      "label": {
+        "es": "Otra tarea",
+        "en": "Something else"
+      }
+    }
+  ],
+  "feelings": [
+    {
+      "id": "focus",
+      "label": {
+        "es": "Me cuesta concentrarme",
+        "en": "It's hard to focus"
+      }
+    },
+    {
+      "id": "drained",
+      "label": {
+        "es": "Me estoy agotando",
+        "en": "I'm getting drained"
+      }
+    },
+    {
+      "id": "discomfort",
+      "label": {
+        "es": "Siento incomodidad",
+        "en": "I feel uncomfortable"
+      }
+    },
+    {
+      "id": "overload",
+      "label": {
+        "es": "Siento saturación",
+        "en": "I feel overloaded"
+      }
+    },
+    {
+      "id": "other",
+      "label": {
+        "es": "Otra cosa",
+        "en": "Something else"
+      }
+    }
+  ],
+  "domains": [
+    {
+      "id": "sound",
+      "question": {
+        "es": "¿Qué escuchas a tu alrededor?",
+        "en": "What can you hear around you?"
+      },
+      "stimuli": [
+        "voices",
+        "noise_constant",
+        "noise_sudden"
+      ]
+    },
+    {
+      "id": "light",
+      "question": {
+        "es": "¿Cómo está la luz?",
+        "en": "How is the light?"
+      },
+      "stimuli": [
+        "glare",
+        "light_bright",
+        "light_dim",
+        "light_flicker"
+      ]
+    },
+    {
+      "id": "sight",
+      "question": {
+        "es": "¿Qué ves mientras trabajas?",
+        "en": "What do you see while you work?"
+      },
+      "stimuli": [
+        "visual_clutter",
+        "movement",
+        "interruptions"
+      ]
+    },
+    {
+      "id": "body",
+      "question": {
+        "es": "¿Cómo se siente el lugar?",
+        "en": "How does the place feel?"
+      },
+      "stimuli": [
+        "too_warm",
+        "too_cold",
+        "smells"
+      ]
+    }
+  ],
+  "stimuli": [
+    {
+      "id": "voices",
+      "domain": "sound",
+      "label": {
+        "es": "Voces o conversaciones cerca",
+        "en": "Voices or conversations nearby"
+      }
+    },
+    {
+      "id": "noise_constant",
+      "domain": "sound",
+      "label": {
+        "es": "Un ruido de fondo constante",
+        "en": "A constant background noise"
+      }
+    },
+    {
+      "id": "noise_sudden",
+      "domain": "sound",
+      "label": {
+        "es": "Ruidos que aparecen de repente",
+        "en": "Sudden noises"
+      }
+    },
+    {
+      "id": "glare",
+      "domain": "light",
+      "label": {
+        "es": "Reflejos en la pantalla",
+        "en": "Glare on the screen"
+      }
+    },
+    {
+      "id": "light_bright",
+      "domain": "light",
+      "label": {
+        "es": "Luz muy fuerte o directa",
+        "en": "Very bright or direct light"
+      }
+    },
+    {
+      "id": "light_dim",
+      "domain": "light",
+      "label": {
+        "es": "Poca luz",
+        "en": "Not enough light"
+      }
+    },
+    {
+      "id": "light_flicker",
+      "domain": "light",
+      "label": {
+        "es": "Una luz que parpadea o zumba",
+        "en": "A light that flickers or hums"
+      }
+    },
+    {
+      "id": "visual_clutter",
+      "domain": "sight",
+      "label": {
+        "es": "Muchas cosas a la vista",
+        "en": "Lots of things in view"
+      }
+    },
+    {
+      "id": "movement",
+      "domain": "sight",
+      "label": {
+        "es": "Gente pasando cerca",
+        "en": "People walking past"
+      }
+    },
+    {
+      "id": "interruptions",
+      "domain": "sight",
+      "label": {
+        "es": "Interrupciones o mensajes",
+        "en": "Interruptions or messages"
+      }
+    },
+    {
+      "id": "too_warm",
+      "domain": "body",
+      "label": {
+        "es": "Hace calor",
+        "en": "It's too warm"
+      }
+    },
+    {
+      "id": "too_cold",
+      "domain": "body",
+      "label": {
+        "es": "Hace frío",
+        "en": "It's too cold"
+      }
+    },
+    {
+      "id": "smells",
+      "domain": "body",
+      "label": {
+        "es": "Olores fuertes",
+        "en": "Strong smells"
+      }
+    }
+  ],
+  "adjustments": [
+    {
+      "id": "noise_cancelling",
+      "stimuli": [
+        "voices",
+        "noise_constant",
+        "noise_sudden"
+      ],
+      "kind": "self",
+      "prior": 0.65,
+      "not_for_tasks": [
+        "meetings"
+      ],
+      "title": {
+        "es": "Usa audífonos con cancelación de ruido",
+        "en": "Use noise-cancelling headphones"
+      },
+      "steps": {
+        "es": "Póntelos antes de empezar, aunque no pongas música. Si no tienes, unos audífonos normales con sonido suave también sirven.",
+        "en": "Put them on before you start, even without music. If you don't have any, regular headphones with soft sound also work."
+      },
+      "why": {
+        "es": "Menos sonido que filtrar deja más atención para la tarea.",
+        "en": "Less sound to filter leaves more attention for the task."
+      }
+    },
+    {
+      "id": "soft_masking",
+      "stimuli": [
+        "voices",
+        "noise_sudden"
+      ],
+      "kind": "self",
+      "prior": 0.45,
+      "not_for_tasks": [
+        "calls",
+        "meetings"
+      ],
+      "title": {
+        "es": "Pon un sonido suave y constante",
+        "en": "Play a soft, steady sound"
+      },
+      "steps": {
+        "es": "Ruido blanco, lluvia o ventilador, a volumen bajo. Que se oiga parejo, sin letra.",
+        "en": "White noise, rain or a fan sound, at low volume. Steady, with no lyrics."
+      },
+      "why": {
+        "es": "Un sonido parejo tapa los cambios bruscos que más distraen.",
+        "en": "A steady sound covers the sudden changes that distract most."
+      }
+    },
+    {
+      "id": "earplugs",
+      "stimuli": [
+        "noise_constant",
+        "noise_sudden",
+        "voices"
+      ],
+      "kind": "self",
+      "prior": 0.5,
+      "not_for_tasks": [
+        "calls",
+        "meetings"
+      ],
+      "title": {
+        "es": "Usa tapones o protectores auditivos",
+        "en": "Use earplugs or ear defenders"
+      },
+      "steps": {
+        "es": "Unos que bajen el volumen sin aislarte del todo te dejan oír si alguien te llama.",
+        "en": "Ones that lower the volume without full isolation still let you hear if someone calls you."
+      },
+      "why": {
+        "es": "Bajar el volumen del entorno reduce el cansancio de escuchar todo el día.",
+        "en": "Lowering the room's volume reduces the fatigue of listening all day."
+      }
+    },
+    {
+      "id": "move_from_voices",
+      "stimuli": [
+        "voices",
+        "movement"
+      ],
+      "kind": "self",
+      "prior": 0.55,
+      "title": {
+        "es": "Cambia a un lugar más alejado de las conversaciones",
+        "en": "Move somewhere farther from conversations"
+      },
+      "steps": {
+        "es": "Busca un sitio lejos de pasillos, cocina o zonas de reunión, solo para esta tarea.",
+        "en": "Find a spot away from walkways, the kitchen or meeting areas, just for this task."
+      },
+      "why": {
+        "es": "La distancia baja mucho cuánto se entienden las palabras de otras personas.",
+        "en": "Distance makes other people's words much harder to follow."
+      }
+    },
+    {
+      "id": "book_quiet_room",
+      "stimuli": [
+        "voices",
+        "noise_sudden",
+        "interruptions",
+        "movement"
+      ],
+      "kind": "self",
+      "prior": 0.55,
+      "title": {
+        "es": "Reserva una sala tranquila para esta tarea",
+        "en": "Book a quiet room for this task"
+      },
+      "steps": {
+        "es": "Aunque sea por un bloque corto. Lleva solo lo que necesitas para esta tarea.",
+        "en": "Even for a short block. Bring only what you need for this task."
+      },
+      "why": {
+        "es": "Un espacio solo para una tarea quita varias fuentes de distracción a la vez.",
+        "en": "A room for a single task removes several distractions at once."
+      }
+    },
+    {
+      "id": "silence_notifications",
+      "stimuli": [
+        "noise_sudden",
+        "interruptions"
+      ],
+      "kind": "self",
+      "prior": 0.6,
+      "not_for_tasks": [
+        "calls"
+      ],
+      "title": {
+        "es": "Silencia las notificaciones durante este bloque",
+        "en": "Silence notifications for this block"
+      },
+      "steps": {
+        "es": "Activa No molestar en el teléfono y en la computadora, y avisa en el chat que respondes al terminar.",
+        "en": "Turn on Do Not Disturb on your phone and computer, and say in chat that you'll reply when you're done."
+      },
+      "why": {
+        "es": "Cada aviso corta la tarea, y retomarla cuesta energía.",
+        "en": "Every alert breaks the task, and getting back into it takes energy."
+      }
+    },
+    {
+      "id": "focus_signal",
+      "stimuli": [
+        "interruptions",
+        "voices"
+      ],
+      "kind": "self",
+      "prior": 0.45,
+      "title": {
+        "es": "Usa una señal visible de “en concentración”",
+        "en": "Show a visible “focusing” signal"
+      },
+      "steps": {
+        "es": "Un estado en el chat, una tarjeta en el escritorio o los audífonos puestos. Acuerda con tu equipo qué significa.",
+        "en": "A chat status, a card on your desk or headphones on. Agree with your team on what it means."
+      },
+      "why": {
+        "es": "Deja claro cuándo es buen momento para hablarte, sin tener que explicarlo cada vez.",
+        "en": "It shows when it's a good time to talk to you, without explaining it every time."
+      }
+    },
+    {
+      "id": "batch_messages",
+      "stimuli": [
+        "interruptions"
+      ],
+      "kind": "self",
+      "prior": 0.45,
+      "title": {
+        "es": "Revisa los mensajes a horas fijas",
+        "en": "Check messages at set times"
+      },
+      "steps": {
+        "es": "Por ejemplo, al terminar este bloque y luego cada hora. Cierra el chat mientras tanto.",
+        "en": "For example, when this block ends and then every hour. Close chat in between."
+      },
+      "why": {
+        "es": "Juntar los mensajes reduce los cambios de tarea.",
+        "en": "Batching messages means fewer task switches."
+      }
+    },
+    {
+      "id": "rotate_screen",
+      "stimuli": [
+        "glare",
+        "light_bright"
+      ],
+      "kind": "self",
+      "prior": 0.65,
+      "title": {
+        "es": "Gira la pantalla para que la luz quede de lado",
+        "en": "Turn your screen so the light is to the side"
+      },
+      "steps": {
+        "es": "Que la ventana o la lámpara no quede detrás de ti ni justo enfrente. Unos grados suelen bastar.",
+        "en": "Keep the window or lamp neither behind you nor straight ahead. A few degrees is often enough."
+      },
+      "why": {
+        "es": "La luz de lado no rebota hacia tus ojos.",
+        "en": "Light from the side doesn't bounce into your eyes."
+      }
+    },
+    {
+      "id": "screen_brightness",
+      "stimuli": [
+        "glare",
+        "light_bright",
+        "visual_clutter"
+      ],
+      "kind": "self",
+      "prior": 0.45,
+      "title": {
+        "es": "Baja el brillo y usa el modo oscuro",
+        "en": "Lower the brightness and use dark mode"
+      },
+      "steps": {
+        "es": "Ajusta el brillo de la pantalla al de la habitación y activa el modo oscuro o un tono cálido.",
+        "en": "Match the screen brightness to the room and turn on dark mode or a warm tint."
+      },
+      "why": {
+        "es": "Menos contraste entre la pantalla y el entorno cansa menos la vista.",
+        "en": "Less contrast between screen and room is easier on the eyes."
+      }
+    },
+    {
+      "id": "close_blinds",
+      "stimuli": [
+        "glare",
+        "light_bright",
+        "too_warm"
+      ],
+      "kind": "self",
+      "prior": 0.55,
+      "title": {
+        "es": "Baja la persiana o la cortina",
+        "en": "Lower the blind or curtain"
+      },
+      "steps": {
+        "es": "Aunque sea a la mitad. Si no está a tu alcance, pide a quien se sienta junto a la ventana.",
+        "en": "Even halfway. If it isn't within reach, ask whoever sits by the window."
+      },
+      "why": {
+        "es": "Quita la luz directa y el calor del sol.",
+        "en": "It removes direct light and the sun's heat."
+      }
+    },
+    {
+      "id": "turn_from_light",
+      "stimuli": [
+        "light_bright",
+        "light_flicker"
+      ],
+      "kind": "self",
+      "prior": 0.5,
+      "title": {
+        "es": "Siéntate de lado a la luz fuerte",
+        "en": "Sit side-on to the strong light"
+      },
+      "steps": {
+        "es": "Cambia de silla o de lugar para que la lámpara o ventana no te dé en la cara.",
+        "en": "Switch chairs or seats so the lamp or window isn't in your face."
+      },
+      "why": {
+        "es": "Sacar la luz fuerte de tu campo visual reduce el esfuerzo de la vista.",
+        "en": "Taking strong light out of your field of view reduces eye strain."
+      }
+    },
+    {
+      "id": "desk_lamp",
+      "stimuli": [
+        "light_dim",
+        "light_flicker"
+      ],
+      "kind": "self",
+      "prior": 0.55,
+      "title": {
+        "es": "Usa una lámpara de escritorio de luz cálida",
+        "en": "Use a warm desk lamp"
+      },
+      "steps": {
+        "es": "Apúntala a tu tarea, no a tus ojos ni a la pantalla.",
+        "en": "Point it at your work, not at your eyes or the screen."
+      },
+      "why": {
+        "es": "Una luz estable y propia no depende del techo.",
+        "en": "Your own steady light doesn't depend on the ceiling lights."
+      }
+    },
+    {
+      "id": "bigger_text",
+      "stimuli": [
+        "light_dim",
+        "glare",
+        "visual_clutter"
+      ],
+      "kind": "self",
+      "prior": 0.4,
+      "title": {
+        "es": "Aumenta el tamaño del texto en pantalla",
+        "en": "Make the text on screen bigger"
+      },
+      "steps": {
+        "es": "Sube el zoom a 125 % o más y usa una sola columna de texto si puedes.",
+        "en": "Zoom to 125% or more and use a single column of text if you can."
+      },
+      "why": {
+        "es": "Leer sin forzar la vista deja energía para entender.",
+        "en": "Reading without straining leaves energy for understanding."
+      }
+    },
+    {
+      "id": "clear_desk",
+      "stimuli": [
+        "visual_clutter"
+      ],
+      "kind": "self",
+      "prior": 0.5,
+      "title": {
+        "es": "Guarda fuera de la vista lo que no usas en esta tarea",
+        "en": "Put away what you don't need for this task"
+      },
+      "steps": {
+        "es": "Papeles, objetos y pestañas abiertas. Déjalo a un lado para retomarlo después.",
+        "en": "Papers, objects and open tabs. Set them aside to pick up later."
+      },
+      "why": {
+        "es": "Cada cosa a la vista compite un poco por tu atención.",
+        "en": "Everything in view competes a little for your attention."
+      }
+    },
+    {
+      "id": "one_window",
+      "stimuli": [
+        "visual_clutter",
+        "interruptions"
+      ],
+      "kind": "self",
+      "prior": 0.55,
+      "not_for_tasks": [
+        "meetings"
+      ],
+      "title": {
+        "es": "Deja una sola ventana abierta, en pantalla completa",
+        "en": "Keep a single window open, full screen"
+      },
+      "steps": {
+        "es": "Cierra o minimiza lo demás mientras dura este bloque.",
+        "en": "Close or minimize everything else for this block."
+      },
+      "why": {
+        "es": "Menos ventanas, menos movimiento y menos decisiones.",
+        "en": "Fewer windows means less motion and fewer decisions."
+      }
+    },
+    {
+      "id": "face_away",
+      "stimuli": [
+        "movement",
+        "visual_clutter"
+      ],
+      "kind": "self",
+      "prior": 0.5,
+      "title": {
+        "es": "Orienta tu silla hacia una pared o fuera del paso",
+        "en": "Turn your chair toward a wall or away from foot traffic"
+      },
+      "steps": {
+        "es": "Que el pasillo o la puerta queden detrás o a un lado de ti.",
+        "en": "Keep the walkway or door behind you or to one side."
+      },
+      "why": {
+        "es": "Lo que se mueve en tu visión atrae la mirada sin que lo decidas.",
+        "en": "Motion in your field of view pulls your eyes without you choosing it."
+      }
+    },
+    {
+      "id": "cooler_spot",
+      "stimuli": [
+        "too_warm"
+      ],
+      "kind": "self",
+      "prior": 0.5,
+      "title": {
+        "es": "Busca un lugar más fresco o usa un ventilador",
+        "en": "Find a cooler spot or use a fan"
+      },
+      "steps": {
+        "es": "Lejos del sol directo y de equipos que calientan. Toma agua fría antes de empezar.",
+        "en": "Away from direct sun and equipment that heats up. Have some cold water before you start."
+      },
+      "why": {
+        "es": "El calor cansa y hace más difícil sostener la atención.",
+        "en": "Heat is tiring and makes it harder to stay focused."
+      }
+    },
+    {
+      "id": "warm_layer",
+      "stimuli": [
+        "too_cold"
+      ],
+      "kind": "self",
+      "prior": 0.6,
+      "title": {
+        "es": "Ten a la mano una capa extra",
+        "en": "Keep an extra layer handy"
+      },
+      "steps": {
+        "es": "Un suéter o una manta ligera, y aléjate de la salida del aire acondicionado.",
+        "en": "A sweater or light blanket, and move away from the air-conditioning vent."
+      },
+      "why": {
+        "es": "Estar a gusto con la temperatura quita una incomodidad de fondo.",
+        "en": "Being comfortable with the temperature removes a background discomfort."
+      }
+    },
+    {
+      "id": "move_from_smell",
+      "stimuli": [
+        "smells"
+      ],
+      "kind": "self",
+      "prior": 0.5,
+      "title": {
+        "es": "Trabaja lejos de la cocina o de la zona de café",
+        "en": "Work away from the kitchen or coffee area"
+      },
+      "steps": {
+        "es": "Solo para esta tarea. Si el olor viene de cerca, una ventana abierta ayuda.",
+        "en": "Just for this task. If the smell is close by, an open window helps."
+      },
+      "why": {
+        "es": "Los olores fuertes se notan todo el tiempo y cansan.",
+        "en": "Strong smells stay noticeable and wear you down."
+      }
+    },
+    {
+      "id": "short_reset",
+      "stimuli": [
+        "voices",
+        "noise_constant",
+        "noise_sudden",
+        "light_bright",
+        "visual_clutter",
+        "movement",
+        "interruptions",
+        "smells"
+      ],
+      "kind": "self",
+      "prior": 0.35,
+      "title": {
+        "es": "Toma 5 minutos en un lugar tranquilo y vuelve",
+        "en": "Take 5 minutes somewhere quiet, then come back"
+      },
+      "steps": {
+        "es": "Sin pantalla y sin hablar con nadie. Al volver, empieza por el paso más pequeño de la tarea.",
+        "en": "No screens and no conversation. When you come back, start with the smallest step of the task."
+      },
+      "why": {
+        "es": "Una pausa sin estímulos baja la carga acumulada.",
+        "en": "A break without stimulation lowers the built-up load."
+      }
+    },
+    {
+      "id": "ask_quiet_desk",
+      "stimuli": [
+        "voices",
+        "noise_sudden",
+        "movement"
+      ],
+      "kind": "ask",
+      "prior": 0.6,
+      "title": {
+        "es": "Pide un lugar fijo en una zona tranquila",
+        "en": "Ask for a regular desk in a quiet area"
+      },
+      "steps": {
+        "es": "Lejos de pasillos, cocina, impresoras y zonas de reunión. Propón probarlo dos semanas.",
+        "en": "Away from walkways, the kitchen, printers and meeting areas. Suggest trying it for two weeks."
+      },
+      "why": {
+        "es": "Un buen lugar fijo resuelve el problema todos los días, no solo hoy.",
+        "en": "A good regular spot solves it every day, not just today."
+      }
+    },
+    {
+      "id": "ask_focus_hours",
+      "stimuli": [
+        "interruptions",
+        "voices"
+      ],
+      "kind": "ask",
+      "prior": 0.45,
+      "title": {
+        "es": "Propón horas de concentración para el equipo",
+        "en": "Suggest focus hours for the team"
+      },
+      "steps": {
+        "es": "Un bloque diario sin reuniones ni mensajes urgentes, que sirva para todas las personas del equipo.",
+        "en": "A daily block with no meetings or urgent messages, for everyone on the team."
+      },
+      "why": {
+        "es": "Planteado como norma del equipo, no tienes que pedir una excepción.",
+        "en": "As a team norm, you don't have to ask for an exception."
+      }
+    },
+    {
+      "id": "ask_noise_source",
+      "stimuli": [
+        "noise_constant",
+        "noise_sudden"
+      ],
+      "kind": "ask",
+      "prior": 0.4,
+      "title": {
+        "es": "Pide mover o revisar el equipo ruidoso",
+        "en": "Ask to move or check the noisy equipment"
+      },
+      "steps": {
+        "es": "La impresora, el clima o el ventilador que se oye desde tu lugar. Di cuál es y a qué hora se nota más.",
+        "en": "The printer, air conditioning or fan you can hear from your desk. Say which one and when it's worst."
+      },
+      "why": {
+        "es": "Quitar la fuente del ruido ayuda a todas las personas cerca.",
+        "en": "Removing the source helps everyone nearby."
+      }
+    },
+    {
+      "id": "ask_antiglare",
+      "stimuli": [
+        "glare"
+      ],
+      "kind": "ask",
+      "prior": 0.5,
+      "title": {
+        "es": "Pide un filtro antirreflejo o un monitor mate",
+        "en": "Ask for an anti-glare filter or a matte monitor"
+      },
+      "steps": {
+        "es": "Menciona en qué horario y con qué luz aparecen los reflejos.",
+        "en": "Mention at what times and under which light the glare shows up."
+      },
+      "why": {
+        "es": "Un filtro quita el reflejo sin depender de dónde esté la luz.",
+        "en": "A filter removes glare wherever the light comes from."
+      }
+    },
+    {
+      "id": "ask_lighting",
+      "stimuli": [
+        "light_bright",
+        "light_flicker",
+        "light_dim"
+      ],
+      "kind": "ask",
+      "prior": 0.5,
+      "title": {
+        "es": "Pide ajustar o revisar la luz de tu lugar",
+        "en": "Ask to adjust or check the lighting at your desk"
+      },
+      "steps": {
+        "es": "Apagar o cambiar la lámpara de arriba, arreglar la que parpadea o sumar una lámpara de escritorio.",
+        "en": "Switch off or replace the overhead light, fix the flickering one, or add a desk lamp."
+      },
+      "why": {
+        "es": "La luz del techo es difícil de evitar si no se cambia de raíz.",
+        "en": "Ceiling light is hard to avoid unless it changes at the source."
+      }
+    },
+    {
+      "id": "ask_divider",
+      "stimuli": [
+        "movement",
+        "visual_clutter"
+      ],
+      "kind": "ask",
+      "prior": 0.5,
+      "title": {
+        "es": "Pide un panel o divisor para tu escritorio",
+        "en": "Ask for a panel or divider for your desk"
+      },
+      "steps": {
+        "es": "Que cubra el lado por donde pasa más gente.",
+        "en": "One that covers the side where most people walk past."
+      },
+      "why": {
+        "es": "Tapa el movimiento de alrededor sin que tengas que cambiarte de lugar.",
+        "en": "It blocks surrounding movement without moving desks."
+      }
+    },
+    {
+      "id": "ask_temperature",
+      "stimuli": [
+        "too_warm",
+        "too_cold"
+      ],
+      "kind": "ask",
+      "prior": 0.4,
+      "title": {
+        "es": "Pide revisar la temperatura de tu zona",
+        "en": "Ask to check the temperature in your area"
+      },
+      "steps": {
+        "es": "O un lugar lejos de la salida del aire o del sol directo.",
+        "en": "Or a spot away from the air vent or direct sun."
+      },
+      "why": {
+        "es": "Una temperatura cómoda es un cambio sencillo que ayuda a todo el equipo.",
+        "en": "A comfortable temperature is a simple change that helps the whole team."
+      }
+    },
+    {
+      "id": "ask_remote_focus",
+      "stimuli": [
+        "voices",
+        "noise_constant",
+        "noise_sudden",
+        "movement",
+        "interruptions",
+        "visual_clutter",
+        "light_bright",
+        "smells"
+      ],
+      "kind": "ask",
+      "prior": 0.55,
+      "not_for_tasks": [
+        "meetings"
+      ],
+      "title": {
+        "es": "Propón hacer este tipo de tarea desde casa",
+        "en": "Suggest doing this kind of task from home"
+      },
+      "steps": {
+        "es": "Solo para las tareas que más concentración piden, por ejemplo un día a la semana.",
+        "en": "Only for the tasks that need the most focus, for example one day a week."
+      },
+      "why": {
+        "es": "En casa controlas el ruido, la luz y las interrupciones.",
+        "en": "At home you control the noise, light and interruptions."
+      }
+    }
+  ],
+  "baseline": {
+    "title": {
+      "es": "Esta vez, no cambies nada",
+      "en": "This time, change nothing"
+    },
+    "steps": {
+      "es": "Trabaja como siempre y al final cuéntanos cómo te fue. Si prefieres probar un ajuste, elige “Dame otra idea”.",
+      "en": "Work as usual and tell us how it went at the end. If you'd rather try an adjustment, choose “Give me another idea”."
+    },
+    "why": {
+      "es": "Comparar con momentos sin cambios nos ayuda a saber qué ajuste te sirve de verdad y no solo el paso del tiempo.",
+      "en": "Comparing with moments without changes helps us tell which adjustment really works for you, not just time passing."
+    }
+  }
+}

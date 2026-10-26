@@ -1,4 +1,8 @@
+mod auth;
+mod catalog;
 mod config;
+mod engine;
+mod error;
 mod routes;
 
 use std::time::Duration;
@@ -26,6 +30,10 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let config = Config::from_env()?;
+
+    // Un catálogo roto no debe llegar a producción: el healthcheck de Railway nunca pasaría.
+    let problems = catalog::problems(&catalog::CATALOG);
+    anyhow::ensure!(problems.is_empty(), "catalog.json inválido:\n{}", problems.join("\n"));
 
     let db = PgPoolOptions::new()
         .max_connections(5)
