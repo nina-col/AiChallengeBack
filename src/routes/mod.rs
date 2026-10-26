@@ -1,6 +1,7 @@
 mod account;
 mod checkins;
 mod health;
+mod scan;
 mod spaces;
 
 use axum::{
@@ -31,7 +32,8 @@ pub fn router(state: AppState) -> Router {
         .route("/checkins/{id}/accept", post(checkins::accept))
         .route("/checkins/{id}/outcome", post(checkins::record_outcome))
         .route("/checkins/{id}/abandon", post(checkins::abandon))
-        .route("/playbook", get(checkins::playbook));
+        .route("/playbook", get(checkins::playbook))
+        .route("/scan/photo", post(scan::scan_photo));
 
     Router::new()
         .route("/health", get(health::health))

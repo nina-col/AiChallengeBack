@@ -13,6 +13,10 @@ pub enum AppError {
     NotFound,
     #[error("{0}")]
     BadRequest(String),
+    #[error("el análisis con IA no está disponible ahora; sigue con las preguntas")]
+    Unavailable,
+    #[error("llegaste al límite de análisis de hoy; sigue con las preguntas")]
+    TooManyRequests,
     #[error(transparent)]
     Database(#[from] sqlx::Error),
 }
@@ -25,6 +29,8 @@ impl IntoResponse for AppError {
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "unauthorized"),
             AppError::NotFound => (StatusCode::NOT_FOUND, "not_found"),
             AppError::BadRequest(_) => (StatusCode::BAD_REQUEST, "bad_request"),
+            AppError::Unavailable => (StatusCode::SERVICE_UNAVAILABLE, "ai_unavailable"),
+            AppError::TooManyRequests => (StatusCode::TOO_MANY_REQUESTS, "daily_limit"),
             AppError::Database(err) => {
                 tracing::error!(error = %err, "error de base de datos");
                 (StatusCode::INTERNAL_SERVER_ERROR, "internal")

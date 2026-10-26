@@ -141,6 +141,13 @@ pub struct CheckinWithProposal {
 pub struct NewObservation {
     stimulus: String,
     response: String,
+    /// De dónde salió: una pregunta, una hipótesis de la foto o del audio que la persona confirmó.
+    #[serde(default = "question_source")]
+    source: String,
+}
+
+fn question_source() -> String {
+    "question".to_owned()
 }
 
 #[derive(Deserialize)]
@@ -174,6 +181,9 @@ pub async fn create_checkin(
         }
         if !matches!(obs.response.as_str(), "yes" | "no" | "unsure") {
             return Err(AppError::BadRequest("response debe ser yes, no o unsure".into()));
+        }
+        if !matches!(obs.source.as_str(), "question" | "photo" | "audio") {
+            return Err(AppError::BadRequest("source debe ser question, photo o audio".into()));
         }
     }
     if let Some(space_id) = body.space_id {
@@ -224,9 +234,10 @@ pub async fn create_checkin(
     .await?;
     for obs in &body.observations {
         sqlx::query(
-            "INSERT INTO observations (checkin_id, source, stimulus, response) VALUES ($1, 'question', $2, $3)",
+            "INSERT INTO observations (checkin_id, source, stimulus, response) VALUES ($1, $2, $3, $4)",
         )
         .bind(id)
+        .bind(&obs.source)
         .bind(&obs.stimulus)
         .bind(&obs.response)
         .execute(&mut *tx)

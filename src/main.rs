@@ -1,22 +1,25 @@
 mod auth;
 mod catalog;
+mod claude;
 mod config;
 mod engine;
 mod error;
 mod routes;
 
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 use anyhow::Context;
 use sqlx::postgres::PgPoolOptions;
 use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
 
-use crate::config::Config;
+use crate::{claude::Claude, config::Config};
 
 #[derive(Clone)]
 pub struct AppState {
     pub db: sqlx::PgPool,
+    /// `None` si no hay ANTHROPIC_API_KEY: el escaneo con foto responde 503 y todo lo demás sigue.
+    pub claude: Option<Arc<Claude>>,
 }
 
 #[tokio::main]
@@ -43,7 +46,18 @@ async fn main() -> anyhow::Result<()> {
         .context("no se pudo conectar a Postgres")?;
     sqlx::migrate!().run(&db).await.context("fallaron las migraciones")?;
 
-    let app = routes::router(AppState { db });
+    let claude = match config.anthropic_api_key {
+        Some(key) => {
+            tracing::info!(model = %config.vision_model, effort = %config.vision_effort, "escaneo con IA activo");
+            Some(Arc::new(Claude::new(key, config.vision_model, config.vision_effort)?))
+        }
+        None => {
+            tracing::warn!("sin ANTHROPIC_API_KEY: el escaneo con foto queda desactivado");
+            None
+        }
+    };
+
+    let app = routes::router(AppState { db, claude });
     let listener = TcpListener::bind(("0.0.0.0", config.port)).await?;
     tracing::info!("escuchando en {}", listener.local_addr()?);
     axum::serve(listener, app)
