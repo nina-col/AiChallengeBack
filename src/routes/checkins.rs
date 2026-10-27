@@ -5,14 +5,16 @@ use axum::{
     extract::{Path, Query, State},
 };
 use chrono::{DateTime, Duration, Utc};
-use serde::{Deserialize, Serialize};
 use rand::RngExt;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::{
     AppState,
     auth::AuthUser,
-    catalog::{AdjustmentKind, BASELINE_ID, CATALOG, Locale, LocalizedAdjustment, LocalizedCatalog},
+    catalog::{
+        AdjustmentKind, BASELINE_ID, CATALOG, Locale, LocalizedAdjustment, LocalizedCatalog,
+    },
     engine::{self, Arm, ArmEvidence, EXPLORATION, Evidence, Reason},
     error::{AppError, AppResult},
 };
@@ -93,7 +95,10 @@ struct SpaceRef {
 fn view(row: CheckinRow, locale: Locale) -> CheckinView {
     CheckinView {
         id: row.id,
-        space: row.space_id.zip(row.space_name).map(|(id, name)| SpaceRef { id, name }),
+        space: row
+            .space_id
+            .zip(row.space_name)
+            .map(|(id, name)| SpaceRef { id, name }),
         task: row.task,
         feeling: row.feeling,
         effort_before: row.effort_before,
@@ -108,7 +113,10 @@ fn view(row: CheckinRow, locale: Locale) -> CheckinView {
         attribution: row.attribution,
         outcome: row.outcome,
         created_at: row.created_at,
-        adjustment: row.adjustment_id.as_deref().and_then(|id| CATALOG.adjustment_view(id, locale)),
+        adjustment: row
+            .adjustment_id
+            .as_deref()
+            .and_then(|id| CATALOG.adjustment_view(id, locale)),
     }
 }
 
@@ -125,8 +133,14 @@ pub struct Proposal {
 enum ReasonView {
     FirstTry,
     Exploring,
-    TriedHere { helped: u32, trials: u32 },
-    TriedElsewhere { helped: u32, trials: u32 },
+    TriedHere {
+        helped: u32,
+        trials: u32,
+    },
+    TriedElsewhere {
+        helped: u32,
+        trials: u32,
+    },
     /// Registro de comparación sin ajuste.
     Comparison,
 }
@@ -168,31 +182,45 @@ pub async fn create_checkin(
     Json(body): Json<NewCheckin>,
 ) -> AppResult<Json<CheckinWithProposal>> {
     if CATALOG.task(&body.task).is_none() {
-        return Err(AppError::BadRequest(format!("tarea desconocida: {}", body.task)));
+        return Err(AppError::BadRequest(format!(
+            "tarea desconocida: {}",
+            body.task
+        )));
     }
     if CATALOG.feeling(&body.feeling).is_none() {
-        return Err(AppError::BadRequest(format!("sensación desconocida: {}", body.feeling)));
+        return Err(AppError::BadRequest(format!(
+            "sensación desconocida: {}",
+            body.feeling
+        )));
     }
     check_scale(body.effort_before)?;
     check_scale(body.discomfort_before)?;
     for obs in &body.observations {
         if CATALOG.stimulus(&obs.stimulus).is_none() {
-            return Err(AppError::BadRequest(format!("estímulo desconocido: {}", obs.stimulus)));
+            return Err(AppError::BadRequest(format!(
+                "estímulo desconocido: {}",
+                obs.stimulus
+            )));
         }
         if !matches!(obs.response.as_str(), "yes" | "no" | "unsure") {
-            return Err(AppError::BadRequest("response debe ser yes, no o unsure".into()));
+            return Err(AppError::BadRequest(
+                "response debe ser yes, no o unsure".into(),
+            ));
         }
         if !matches!(obs.source.as_str(), "question" | "photo" | "audio") {
-            return Err(AppError::BadRequest("source debe ser question, photo o audio".into()));
+            return Err(AppError::BadRequest(
+                "source debe ser question, photo o audio".into(),
+            ));
         }
     }
     if let Some(space_id) = body.space_id {
-        let owned: bool =
-            sqlx::query_scalar("SELECT EXISTS (SELECT 1 FROM spaces WHERE id = $1 AND user_id = $2)")
-                .bind(space_id)
-                .bind(user.id)
-                .fetch_one(&state.db)
-                .await?;
+        let owned: bool = sqlx::query_scalar(
+            "SELECT EXISTS (SELECT 1 FROM spaces WHERE id = $1 AND user_id = $2)",
+        )
+        .bind(space_id)
+        .bind(user.id)
+        .fetch_one(&state.db)
+        .await?;
         if !owned {
             return Err(AppError::NotFound);
         }
@@ -214,7 +242,11 @@ pub async fn create_checkin(
         }
         None if affecting.len() == 1 => Some(affecting[0].to_owned()),
         None if affecting.is_empty() => None,
-        None => return Err(AppError::BadRequest("hay varios estímulos: falta focus_stimulus".into())),
+        None => {
+            return Err(AppError::BadRequest(
+                "hay varios estímulos: falta focus_stimulus".into(),
+            ));
+        }
     };
 
     let mut tx = state.db.begin().await?;
@@ -248,7 +280,10 @@ pub async fn create_checkin(
     let row = load(&state, user.id, id).await?;
     let proposal = propose(&state, user.id, user.locale, &row).await?;
     let row = load(&state, user.id, id).await?;
-    Ok(Json(CheckinWithProposal { checkin: view(row, user.locale), proposal }))
+    Ok(Json(CheckinWithProposal {
+        checkin: view(row, user.locale),
+        proposal,
+    }))
 }
 
 #[derive(Deserialize)]
@@ -265,10 +300,14 @@ pub async fn decline(
 ) -> AppResult<Json<CheckinWithProposal>> {
     let row = load(&state, user.id, id).await?;
     if row.status != "proposed" {
-        return Err(AppError::BadRequest("este registro ya no está esperando una propuesta".into()));
+        return Err(AppError::BadRequest(
+            "este registro ya no está esperando una propuesta".into(),
+        ));
     }
     let Some(current) = row.adjustment_id.clone() else {
-        return Err(AppError::BadRequest("no hay ningún ajuste propuesto".into()));
+        return Err(AppError::BadRequest(
+            "no hay ningún ajuste propuesto".into(),
+        ));
     };
     match body.reason.as_str() {
         "other_idea" => {}
@@ -283,7 +322,11 @@ pub async fn decline(
                 .await?;
             }
         }
-        _ => return Err(AppError::BadRequest("reason debe ser other_idea o cannot_here".into())),
+        _ => {
+            return Err(AppError::BadRequest(
+                "reason debe ser other_idea o cannot_here".into(),
+            ));
+        }
     }
     sqlx::query(
         "UPDATE checkins SET declined = array_append(declined, $2), adjustment_id = NULL WHERE id = $1",
@@ -296,7 +339,10 @@ pub async fn decline(
     let row = load(&state, user.id, id).await?;
     let proposal = propose(&state, user.id, user.locale, &row).await?;
     let row = load(&state, user.id, id).await?;
-    Ok(Json(CheckinWithProposal { checkin: view(row, user.locale), proposal }))
+    Ok(Json(CheckinWithProposal {
+        checkin: view(row, user.locale),
+        proposal,
+    }))
 }
 
 #[derive(Deserialize)]
@@ -313,18 +359,26 @@ pub async fn accept(
 ) -> AppResult<Json<CheckinView>> {
     let row = load(&state, user.id, id).await?;
     if row.status != "proposed" || row.adjustment_id.is_none() {
-        return Err(AppError::BadRequest("no hay un ajuste propuesto para aceptar".into()));
+        return Err(AppError::BadRequest(
+            "no hay un ajuste propuesto para aceptar".into(),
+        ));
     }
     let remind_at = match body.remind_in_minutes {
         Some(minutes @ 5..=240) => Some(Utc::now() + Duration::minutes(i64::from(minutes))),
-        Some(_) => return Err(AppError::BadRequest("remind_in_minutes debe estar entre 5 y 240".into())),
+        Some(_) => {
+            return Err(AppError::BadRequest(
+                "remind_in_minutes debe estar entre 5 y 240".into(),
+            ));
+        }
         None => None,
     };
-    sqlx::query("UPDATE checkins SET status = 'trying', started_at = now(), remind_at = $2 WHERE id = $1")
-        .bind(id)
-        .bind(remind_at)
-        .execute(&state.db)
-        .await?;
+    sqlx::query(
+        "UPDATE checkins SET status = 'trying', started_at = now(), remind_at = $2 WHERE id = $1",
+    )
+    .bind(id)
+    .bind(remind_at)
+    .execute(&state.db)
+    .await?;
     Ok(Json(view(load(&state, user.id, id).await?, user.locale)))
 }
 
@@ -357,11 +411,15 @@ pub async fn record_outcome(
     check_scale(body.effort_after)?;
     check_scale(body.discomfort_after)?;
     if !matches!(body.attribution.as_str(), "yes" | "no" | "unsure") {
-        return Err(AppError::BadRequest("attribution debe ser yes, no o unsure".into()));
+        return Err(AppError::BadRequest(
+            "attribution debe ser yes, no o unsure".into(),
+        ));
     }
     let row = load(&state, user.id, id).await?;
     if row.status != "trying" {
-        return Err(AppError::BadRequest("este registro no tiene un ajuste en prueba".into()));
+        return Err(AppError::BadRequest(
+            "este registro no tiene un ajuste en prueba".into(),
+        ));
     }
     // Registros anteriores a la medida de molestia: el esfuerzo hace de respaldo.
     let before = row.discomfort_before.unwrap_or(row.effort_before);
@@ -403,7 +461,10 @@ pub async fn record_outcome(
     .await?;
     Ok(Json(OutcomeView {
         checkin: view(row, user.locale),
-        here: EvidenceView { helped: count(helped), trials: count(trials) },
+        here: EvidenceView {
+            helped: count(helped),
+            trials: count(trials),
+        },
     }))
 }
 
@@ -448,7 +509,9 @@ pub async fn list_checkins(
     .bind(limit)
     .fetch_all(&state.db)
     .await?;
-    Ok(Json(rows.into_iter().map(|r| view(r, user.locale)).collect()))
+    Ok(Json(
+        rows.into_iter().map(|r| view(r, user.locale)).collect(),
+    ))
 }
 
 pub async fn get_checkin(
@@ -482,8 +545,43 @@ pub struct PlaybookEntry {
     last_tried: Option<DateTime<Utc>>,
 }
 
+#[derive(Serialize)]
+pub struct Progress {
+    /// Pruebas terminadas con respuesta, sea cual sea el resultado (incluye las comparaciones).
+    trials: u32,
+    /// Ajustes distintos que ya probó, del primero al más reciente.
+    tried: Vec<String>,
+}
+
+/// Lo que la persona ya sabe de su espacio. Cuenta las pruebas, no los resultados: premiar solo
+/// "ayudó" empujaría a contestar que ayudó y estropearía la medición (Dejonckheere et al., 2024).
+/// Solo crece; nada caduca.
+pub async fn progress(State(state): State<AppState>, user: AuthUser) -> AppResult<Json<Progress>> {
+    let trials: i64 =
+        sqlx::query_scalar("SELECT count(*) FROM checkins WHERE user_id = $1 AND status = 'done'")
+            .bind(user.id)
+            .fetch_one(&state.db)
+            .await?;
+    let tried: Vec<String> = sqlx::query_scalar(
+        "SELECT adjustment_id FROM checkins
+         WHERE user_id = $1 AND status = 'done' AND adjustment_id IS NOT NULL AND adjustment_id <> 'no_change'
+         GROUP BY adjustment_id
+         ORDER BY min(completed_at)",
+    )
+    .bind(user.id)
+    .fetch_all(&state.db)
+    .await?;
+    Ok(Json(Progress {
+        trials: count(trials),
+        tried,
+    }))
+}
+
 /// Mis ajustes: lo que ha ayudado al menos una vez, por tarea, lugar y estímulo.
-pub async fn playbook(State(state): State<AppState>, user: AuthUser) -> AppResult<Json<Vec<PlaybookEntry>>> {
+pub async fn playbook(
+    State(state): State<AppState>,
+    user: AuthUser,
+) -> AppResult<Json<Vec<PlaybookEntry>>> {
     let rows: Vec<PlaybookRow> = sqlx::query_as(
         "SELECT c.task, c.space_id, s.name AS space_name, c.focus_stimulus AS stimulus, c.adjustment_id,
                 count(*) FILTER (WHERE c.outcome = 'helped') AS helped,
@@ -506,7 +604,10 @@ pub async fn playbook(State(state): State<AppState>, user: AuthUser) -> AppResul
             let adjustment = CATALOG.adjustment(&r.adjustment_id)?.localized(user.locale);
             Some(PlaybookEntry {
                 task: r.task,
-                space: r.space_id.zip(r.space_name).map(|(id, name)| SpaceRef { id, name }),
+                space: r
+                    .space_id
+                    .zip(r.space_name)
+                    .map(|(id, name)| SpaceRef { id, name }),
                 stimulus: r.stimulus,
                 adjustment,
                 helped: count(r.helped),
@@ -554,14 +655,22 @@ async fn propose(
             .bind(BASELINE_ID)
             .execute(&state.db)
             .await?;
-        let adjustment = CATALOG.adjustment_view(BASELINE_ID, locale).expect("baseline");
-        return Ok(Some(Proposal { adjustment, reason: ReasonView::Comparison, alternatives: 1 }));
+        let adjustment = CATALOG
+            .adjustment_view(BASELINE_ID, locale)
+            .expect("baseline");
+        return Ok(Some(Proposal {
+            adjustment,
+            reason: ReasonView::Comparison,
+            alternatives: 1,
+        }));
     }
     let blocked: Vec<String> = match row.space_id {
-        Some(space_id) => sqlx::query_scalar("SELECT adjustment_id FROM space_blocks WHERE space_id = $1")
-            .bind(space_id)
-            .fetch_all(&state.db)
-            .await?,
+        Some(space_id) => {
+            sqlx::query_scalar("SELECT adjustment_id FROM space_blocks WHERE space_id = $1")
+                .bind(space_id)
+                .fetch_all(&state.db)
+                .await?
+        }
         None => Vec::new(),
     };
     let available: Vec<_> = CATALOG
@@ -572,7 +681,9 @@ async fn propose(
         .collect();
     // En el momento se proponen cosas que la persona puede hacer ya; pedir a la empresa queda
     // para cuando no queda nada propio que probar.
-    let has_self = available.iter().any(|a| a.kind == AdjustmentKind::SelfServe);
+    let has_self = available
+        .iter()
+        .any(|a| a.kind == AdjustmentKind::SelfServe);
     let candidates: Vec<_> = available
         .into_iter()
         .filter(|a| !has_self || a.kind == AdjustmentKind::SelfServe)
@@ -615,10 +726,16 @@ async fn propose(
 
     let arms: Vec<Arm> = candidates
         .iter()
-        .map(|a| Arm { id: &a.id, prior: a.prior, evidence: evidence.get(&a.id).copied().unwrap_or_default() })
+        .map(|a| Arm {
+            id: &a.id,
+            prior: a.prior,
+            evidence: evidence.get(&a.id).copied().unwrap_or_default(),
+        })
         .collect();
     let chosen = engine::choose(&arms, EXPLORATION, &mut rand::rng()).expect("hay candidatos");
-    let adjustment = CATALOG.adjustment(chosen.id).expect("el candidato viene del catálogo");
+    let adjustment = CATALOG
+        .adjustment(chosen.id)
+        .expect("el candidato viene del catálogo");
 
     sqlx::query("UPDATE checkins SET adjustment_id = $2 WHERE id = $1")
         .bind(row.id)
@@ -629,8 +746,14 @@ async fn propose(
     let reason = match engine::reason(chosen, &arms) {
         Reason::FirstTry => ReasonView::FirstTry,
         Reason::Exploring => ReasonView::Exploring,
-        Reason::TriedHere(e) => ReasonView::TriedHere { helped: e.helped, trials: e.trials() },
-        Reason::TriedElsewhere(e) => ReasonView::TriedElsewhere { helped: e.helped, trials: e.trials() },
+        Reason::TriedHere(e) => ReasonView::TriedHere {
+            helped: e.helped,
+            trials: e.trials(),
+        },
+        Reason::TriedElsewhere(e) => ReasonView::TriedElsewhere {
+            helped: e.helped,
+            trials: e.trials(),
+        },
     };
     Ok(Some(Proposal {
         adjustment: adjustment.localized(locale),

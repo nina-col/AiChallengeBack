@@ -23,13 +23,18 @@ pub fn hash_device_key(key: &str) -> Vec<u8> {
 
 pub fn valid_device_key(key: &str) -> bool {
     (MIN_KEY_LEN..=MAX_KEY_LEN).contains(&key.len())
-        && key.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+        && key
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
 }
 
 impl FromRequestParts<AppState> for AuthUser {
     type Rejection = AppError;
 
-    async fn from_request_parts(parts: &mut Parts, state: &AppState) -> Result<Self, Self::Rejection> {
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &AppState,
+    ) -> Result<Self, Self::Rejection> {
         let key = parts
             .headers
             .get(AUTHORIZATION)
@@ -43,8 +48,11 @@ impl FromRequestParts<AppState> for AuthUser {
                 .bind(hash_device_key(key))
                 .fetch_optional(&state.db)
                 .await?;
-        user.map(|(id, locale)| AuthUser { id, locale: Locale::parse(&locale) })
-            .ok_or(AppError::Unauthorized)
+        user.map(|(id, locale)| AuthUser {
+            id,
+            locale: Locale::parse(&locale),
+        })
+        .ok_or(AppError::Unauthorized)
     }
 }
 
@@ -56,7 +64,11 @@ mod tests {
     fn rejects_short_or_strange_keys() {
         assert!(!valid_device_key("corta"));
         assert!(!valid_device_key(&"a".repeat(MAX_KEY_LEN + 1)));
-        assert!(!valid_device_key(&format!("{}{}", "a".repeat(40), " espacio")));
+        assert!(!valid_device_key(&format!(
+            "{}{}",
+            "a".repeat(40),
+            " espacio"
+        )));
         assert!(valid_device_key(&"aZ09-_".repeat(8)));
     }
 

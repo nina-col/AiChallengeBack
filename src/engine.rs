@@ -94,7 +94,10 @@ pub fn choose<'a, R: Rng + ?Sized>(
     rng: &mut R,
 ) -> Option<&'a Arm<'a>> {
     let all_exhausted = arms.iter().all(is_exhausted);
-    let eligible: Vec<&Arm> = arms.iter().filter(|arm| all_exhausted || !is_exhausted(arm)).collect();
+    let eligible: Vec<&Arm> = arms
+        .iter()
+        .filter(|arm| all_exhausted || !is_exhausted(arm))
+        .collect();
     if eligible.is_empty() {
         return None;
     }
@@ -143,18 +146,30 @@ mod tests {
 
     use super::*;
 
-    fn arm(id: &str, prior: f64, exact: (u32, u32), person: (u32, u32), global: (u32, u32)) -> Arm<'_> {
+    fn arm(
+        id: &str,
+        prior: f64,
+        exact: (u32, u32),
+        person: (u32, u32),
+        global: (u32, u32),
+    ) -> Arm<'_> {
         let ev = |(helped, not_helped)| Evidence { helped, not_helped };
         Arm {
             id,
             prior,
-            evidence: ArmEvidence { exact: ev(exact), person: ev(person), global: ev(global) },
+            evidence: ArmEvidence {
+                exact: ev(exact),
+                person: ev(person),
+                global: ev(global),
+            },
         }
     }
 
     fn wins(arms: &[Arm], id: &str, draws: usize) -> usize {
         let mut rng = StdRng::seed_from_u64(7);
-        (0..draws).filter(|_| choose(arms, 0.0, &mut rng).unwrap().id == id).count()
+        (0..draws)
+            .filter(|_| choose(arms, 0.0, &mut rng).unwrap().id == id)
+            .count()
     }
 
     #[test]
@@ -211,7 +226,10 @@ mod tests {
             arm("nuevo", 0.5, (0, 0), (0, 0), (0, 0)),
         ];
         let failed = wins(&arms, "fallo_una", 1000);
-        assert!((150..450).contains(&failed), "propuso el que falló una vez {failed} veces");
+        assert!(
+            (150..450).contains(&failed),
+            "propuso el que falló una vez {failed} veces"
+        );
     }
 
     #[test]
@@ -227,9 +245,21 @@ mod tests {
     #[test]
     fn reasons_follow_the_most_specific_evidence() {
         let here = arm("x", 0.5, (2, 1), (5, 1), (0, 0));
-        assert_eq!(reason(&here, &[]), Reason::TriedHere(Evidence { helped: 2, not_helped: 1 }));
+        assert_eq!(
+            reason(&here, &[]),
+            Reason::TriedHere(Evidence {
+                helped: 2,
+                not_helped: 1
+            })
+        );
         let elsewhere = arm("x", 0.5, (0, 0), (1, 1), (0, 0));
-        assert_eq!(reason(&elsewhere, &[]), Reason::TriedElsewhere(Evidence { helped: 1, not_helped: 1 }));
+        assert_eq!(
+            reason(&elsewhere, &[]),
+            Reason::TriedElsewhere(Evidence {
+                helped: 1,
+                not_helped: 1
+            })
+        );
         let new = arm("x", 0.5, (0, 0), (0, 0), (9, 1));
         assert_eq!(reason(&new, &[]), Reason::FirstTry);
         let known_good = arm("y", 0.5, (2, 0), (2, 0), (0, 0));
@@ -243,7 +273,12 @@ mod tests {
             arm("otro", 0.5, (0, 0), (0, 0), (0, 0)),
         ];
         let mut rng = StdRng::seed_from_u64(3);
-        let explored = (0..2000).filter(|_| choose(&arms, 1.0, &mut rng).unwrap().id == "otro").count();
-        assert!((800..1200).contains(&explored), "con exploración total, mitad y mitad: {explored}");
+        let explored = (0..2000)
+            .filter(|_| choose(&arms, 1.0, &mut rng).unwrap().id == "otro")
+            .count();
+        assert!(
+            (800..1200).contains(&explored),
+            "con exploración total, mitad y mitad: {explored}"
+        );
     }
 }

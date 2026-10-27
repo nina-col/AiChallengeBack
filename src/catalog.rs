@@ -13,7 +13,11 @@ pub enum Locale {
 
 impl Locale {
     pub fn parse(value: &str) -> Self {
-        if value == "en" { Locale::En } else { Locale::Es }
+        if value == "en" {
+            Locale::En
+        } else {
+            Locale::Es
+        }
     }
 }
 
@@ -144,7 +148,10 @@ impl Catalog {
 
     pub fn localized(&self, locale: Locale) -> LocalizedCatalog<'_> {
         fn label(item: &Labeled, locale: Locale) -> LocalizedLabel<'_> {
-            LocalizedLabel { id: &item.id, label: item.label.get(locale) }
+            LocalizedLabel {
+                id: &item.id,
+                label: item.label.get(locale),
+            }
         }
         LocalizedCatalog {
             version: self.version,
@@ -160,11 +167,18 @@ impl Catalog {
                         .stimuli
                         .iter()
                         .filter(|s| s.domain == d.id)
-                        .map(|s| LocalizedLabel { id: &s.id, label: s.label.get(locale) })
+                        .map(|s| LocalizedLabel {
+                            id: &s.id,
+                            label: s.label.get(locale),
+                        })
                         .collect(),
                 })
                 .collect(),
-            adjustments: self.adjustments.iter().map(|a| a.localized(locale)).collect(),
+            adjustments: self
+                .adjustments
+                .iter()
+                .map(|a| a.localized(locale))
+                .collect(),
         }
     }
 }
@@ -225,11 +239,26 @@ pub fn problems(catalog: &Catalog) -> Vec<String> {
             }
         }
     };
-    unique("tarea", catalog.tasks.iter().map(|t| t.id.as_str()).collect());
-    unique("sensación", catalog.feelings.iter().map(|f| f.id.as_str()).collect());
-    unique("dominio", catalog.domains.iter().map(|d| d.id.as_str()).collect());
-    unique("estímulo", catalog.stimuli.iter().map(|s| s.id.as_str()).collect());
-    unique("ajuste", catalog.adjustments.iter().map(|a| a.id.as_str()).collect());
+    unique(
+        "tarea",
+        catalog.tasks.iter().map(|t| t.id.as_str()).collect(),
+    );
+    unique(
+        "sensación",
+        catalog.feelings.iter().map(|f| f.id.as_str()).collect(),
+    );
+    unique(
+        "dominio",
+        catalog.domains.iter().map(|d| d.id.as_str()).collect(),
+    );
+    unique(
+        "estímulo",
+        catalog.stimuli.iter().map(|s| s.id.as_str()).collect(),
+    );
+    unique(
+        "ajuste",
+        catalog.adjustments.iter().map(|a| a.id.as_str()).collect(),
+    );
 
     let mut texts: Vec<(&str, &Text)> = Vec::new();
     texts.extend(catalog.tasks.iter().map(|t| (t.id.as_str(), &t.label)));
@@ -237,13 +266,24 @@ pub fn problems(catalog: &Catalog) -> Vec<String> {
     texts.extend(catalog.domains.iter().map(|d| (d.id.as_str(), &d.question)));
     texts.extend(catalog.stimuli.iter().map(|s| (s.id.as_str(), &s.label)));
     for a in &catalog.adjustments {
-        texts.extend([(a.id.as_str(), &a.title), (a.id.as_str(), &a.steps), (a.id.as_str(), &a.why)]);
+        texts.extend([
+            (a.id.as_str(), &a.title),
+            (a.id.as_str(), &a.steps),
+            (a.id.as_str(), &a.why),
+        ]);
         if a.id == BASELINE_ID || a.kind == AdjustmentKind::Baseline {
-            problems.push(format!("{}: la comparación sin ajuste va en \"baseline\", no en la lista", a.id));
+            problems.push(format!(
+                "{}: la comparación sin ajuste va en \"baseline\", no en la lista",
+                a.id
+            ));
         }
     }
     let b = &catalog.baseline;
-    texts.extend([(BASELINE_ID, &b.title), (BASELINE_ID, &b.steps), (BASELINE_ID, &b.why)]);
+    texts.extend([
+        (BASELINE_ID, &b.title),
+        (BASELINE_ID, &b.steps),
+        (BASELINE_ID, &b.why),
+    ]);
     for (id, text) in texts {
         if text.es.trim().is_empty() || text.en.trim().is_empty() {
             problems.push(format!("texto vacío en {id}"));
@@ -253,10 +293,14 @@ pub fn problems(catalog: &Catalog) -> Vec<String> {
     for d in &catalog.domains {
         for s in &d.stimuli {
             match catalog.stimulus(s) {
-                None => problems.push(format!("el dominio {} nombra un estímulo inexistente: {s}", d.id)),
-                Some(st) if st.domain != d.id => {
-                    problems.push(format!("{s} está en el dominio {} pero dice {}", d.id, st.domain))
-                }
+                None => problems.push(format!(
+                    "el dominio {} nombra un estímulo inexistente: {s}",
+                    d.id
+                )),
+                Some(st) if st.domain != d.id => problems.push(format!(
+                    "{s} está en el dominio {} pero dice {}",
+                    d.id, st.domain
+                )),
                 Some(_) => {}
             }
         }
@@ -270,7 +314,10 @@ pub fn problems(catalog: &Catalog) -> Vec<String> {
             .iter()
             .any(|a| a.kind == AdjustmentKind::SelfServe && a.stimuli.contains(&s.id))
         {
-            problems.push(format!("el estímulo {} no tiene ningún ajuste que la persona pueda hacer", s.id));
+            problems.push(format!(
+                "el estímulo {} no tiene ningún ajuste que la persona pueda hacer",
+                s.id
+            ));
         }
     }
     for a in &catalog.adjustments {
@@ -301,7 +348,11 @@ mod tests {
     #[test]
     fn catalog_is_consistent() {
         let problems = problems(&CATALOG);
-        assert!(problems.is_empty(), "problemas en catalog.json:\n{}", problems.join("\n"));
+        assert!(
+            problems.is_empty(),
+            "problemas en catalog.json:\n{}",
+            problems.join("\n")
+        );
     }
 
     #[test]
@@ -312,7 +363,11 @@ mod tests {
                     .adjustments
                     .iter()
                     .any(|a| a.kind == AdjustmentKind::SelfServe && a.fits(&stimulus.id, &task.id));
-                assert!(any_self, "sin ajuste propio para {} en {}", stimulus.id, task.id);
+                assert!(
+                    any_self,
+                    "sin ajuste propio para {} en {}",
+                    stimulus.id, task.id
+                );
             }
         }
     }

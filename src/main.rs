@@ -36,7 +36,11 @@ async fn main() -> anyhow::Result<()> {
 
     // Un catálogo roto no debe llegar a producción: el healthcheck de Railway nunca pasaría.
     let problems = catalog::problems(&catalog::CATALOG);
-    anyhow::ensure!(problems.is_empty(), "catalog.json inválido:\n{}", problems.join("\n"));
+    anyhow::ensure!(
+        problems.is_empty(),
+        "catalog.json inválido:\n{}",
+        problems.join("\n")
+    );
 
     let db = PgPoolOptions::new()
         .max_connections(5)
@@ -44,12 +48,19 @@ async fn main() -> anyhow::Result<()> {
         .connect(&config.database_url)
         .await
         .context("no se pudo conectar a Postgres")?;
-    sqlx::migrate!().run(&db).await.context("fallaron las migraciones")?;
+    sqlx::migrate!()
+        .run(&db)
+        .await
+        .context("fallaron las migraciones")?;
 
     let claude = match config.anthropic_api_key {
         Some(key) => {
             tracing::info!(model = %config.vision_model, effort = %config.vision_effort, "escaneo con IA activo");
-            Some(Arc::new(Claude::new(key, config.vision_model, config.vision_effort)?))
+            Some(Arc::new(Claude::new(
+                key,
+                config.vision_model,
+                config.vision_effort,
+            )?))
         }
         None => {
             tracing::warn!("sin ANTHROPIC_API_KEY: el escaneo con foto queda desactivado");

@@ -43,7 +43,12 @@ pub enum ClaudeError {
 impl Claude {
     pub fn new(api_key: String, model: String, effort: String) -> anyhow::Result<Self> {
         let http = reqwest::Client::builder().timeout(TIMEOUT).build()?;
-        Ok(Self { http, api_key, model, effort })
+        Ok(Self {
+            http,
+            api_key,
+            model,
+            effort,
+        })
     }
 
     /// Una sola petición cuya respuesta debe cumplir `schema`.
@@ -83,7 +88,10 @@ impl Claude {
                 .and_then(Value::as_str)
                 .unwrap_or("sin detalle")
                 .to_owned();
-            return Err(ClaudeError::Api { status: status.as_u16(), message });
+            return Err(ClaudeError::Api {
+                status: status.as_u16(),
+                message,
+            });
         }
         parse_reply(&value, &self.model)
     }
@@ -112,7 +120,10 @@ fn parse_reply(value: &Value, requested_model: &str) -> Result<StructuredReply, 
     };
     Ok(StructuredReply {
         json,
-        model: value["model"].as_str().unwrap_or(requested_model).to_owned(),
+        model: value["model"]
+            .as_str()
+            .unwrap_or(requested_model)
+            .to_owned(),
         input_tokens: usage("input_tokens"),
         output_tokens: usage("output_tokens"),
     })
@@ -146,8 +157,15 @@ mod tests {
     #[test]
     fn refusal_and_truncation_are_errors_not_content() {
         let refusal = json!({ "stop_reason": "refusal", "content": [] });
-        assert!(matches!(parse_reply(&refusal, "m"), Err(ClaudeError::Refusal)));
-        let cut = json!({ "stop_reason": "max_tokens", "content": [{ "type": "text", "text": "{" }] });
-        assert!(matches!(parse_reply(&cut, "m"), Err(ClaudeError::Truncated)));
+        assert!(matches!(
+            parse_reply(&refusal, "m"),
+            Err(ClaudeError::Refusal)
+        ));
+        let cut =
+            json!({ "stop_reason": "max_tokens", "content": [{ "type": "text", "text": "{" }] });
+        assert!(matches!(
+            parse_reply(&cut, "m"),
+            Err(ClaudeError::Truncated)
+        ));
     }
 }

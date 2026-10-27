@@ -40,7 +40,13 @@ pub async fn login_device(
     let key_hash = hash_device_key(&body.device_key);
 
     if let Some(user_id) = existing_user(&state, &key_hash).await? {
-        return Ok((StatusCode::OK, Json(DeviceSession { user_id, created: false })));
+        return Ok((
+            StatusCode::OK,
+            Json(DeviceSession {
+                user_id,
+                created: false,
+            }),
+        ));
     }
     // Guardar registros sobre el entorno de trabajo es dato sensible: sin consentimiento expreso
     // no se crea la cuenta (LFPDPPP art. 8; Apple 5.1.1).
@@ -61,20 +67,36 @@ pub async fn login_device(
     .await?;
 
     match created {
-        Some(user_id) => Ok((StatusCode::CREATED, Json(DeviceSession { user_id, created: true }))),
+        Some(user_id) => Ok((
+            StatusCode::CREATED,
+            Json(DeviceSession {
+                user_id,
+                created: true,
+            }),
+        )),
         // Dos peticiones a la vez con la misma llave: la otra ganó.
         None => {
-            let user_id = existing_user(&state, &key_hash).await?.ok_or(AppError::NotFound)?;
-            Ok((StatusCode::OK, Json(DeviceSession { user_id, created: false })))
+            let user_id = existing_user(&state, &key_hash)
+                .await?
+                .ok_or(AppError::NotFound)?;
+            Ok((
+                StatusCode::OK,
+                Json(DeviceSession {
+                    user_id,
+                    created: false,
+                }),
+            ))
         }
     }
 }
 
 async fn existing_user(state: &AppState, key_hash: &[u8]) -> AppResult<Option<Uuid>> {
-    Ok(sqlx::query_scalar("SELECT id FROM users WHERE key_hash = $1")
-        .bind(key_hash)
-        .fetch_optional(&state.db)
-        .await?)
+    Ok(
+        sqlx::query_scalar("SELECT id FROM users WHERE key_hash = $1")
+            .bind(key_hash)
+            .fetch_optional(&state.db)
+            .await?,
+    )
 }
 
 #[derive(Serialize, sqlx::FromRow)]

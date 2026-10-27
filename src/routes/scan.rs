@@ -94,14 +94,22 @@ pub async fn scan_photo(
     let task = CATALOG
         .task(&body.task)
         .ok_or_else(|| AppError::BadRequest(format!("tarea desconocida: {}", body.task)))?;
-    if body.audio.iter().any(|s| !AUDIO_STIMULI.contains(&s.as_str())) {
-        return Err(AppError::BadRequest("audio solo admite voices, noise_constant y noise_sudden".into()));
+    if body
+        .audio
+        .iter()
+        .any(|s| !AUDIO_STIMULI.contains(&s.as_str()))
+    {
+        return Err(AppError::BadRequest(
+            "audio solo admite voices, noise_constant y noise_sudden".into(),
+        ));
     }
     let image = base64::engine::general_purpose::STANDARD
         .decode(body.image_base64.as_bytes())
         .map_err(|_| AppError::BadRequest("image_base64 no es base64 válido".into()))?;
     if image.len() > MAX_IMAGE_BYTES || !image.starts_with(&[0xFF, 0xD8, 0xFF]) {
-        return Err(AppError::BadRequest("la imagen debe ser un JPEG de 1.5 MB o menos".into()));
+        return Err(AppError::BadRequest(
+            "la imagen debe ser un JPEG de 1.5 MB o menos".into(),
+        ));
     }
     drop(image);
 
@@ -138,9 +146,17 @@ pub async fn scan_photo(
         },
     ]);
 
-    let reply = claude.structured(SYSTEM, content, schema(), MAX_TOKENS).await;
+    let reply = claude
+        .structured(SYSTEM, content, schema(), MAX_TOKENS)
+        .await;
     let (hypotheses, model, input, output, ok) = match reply {
-        Ok(reply) => (sanitize(&reply.json), reply.model, reply.input_tokens, reply.output_tokens, true),
+        Ok(reply) => (
+            sanitize(&reply.json),
+            reply.model,
+            reply.input_tokens,
+            reply.output_tokens,
+            true,
+        ),
         // Si la IA declina, la persona sigue con las preguntas: no es un error para ella.
         Err(ClaudeError::Refusal) => (Vec::new(), claude.model.clone(), 0, 0, false),
         Err(err) => {
@@ -254,7 +270,10 @@ mod tests {
     #[test]
     fn schema_stimuli_exist_in_the_catalog() {
         for id in PHOTO_STIMULI.iter().chain(AUDIO_STIMULI.iter()) {
-            assert!(CATALOG.stimulus(id).is_some(), "{id} no está en el catálogo");
+            assert!(
+                CATALOG.stimulus(id).is_some(),
+                "{id} no está en el catálogo"
+            );
         }
     }
 }

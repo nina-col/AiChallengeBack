@@ -21,18 +21,27 @@ pub fn router(state: AppState) -> Router {
         .route("/auth/device", post(account::login_device))
         .route(
             "/me",
-            get(account::get_me).patch(account::update_me).delete(account::delete_me),
+            get(account::get_me)
+                .patch(account::update_me)
+                .delete(account::delete_me),
         )
-        .route("/spaces", get(spaces::list_spaces).post(spaces::create_space))
+        .route(
+            "/spaces",
+            get(spaces::list_spaces).post(spaces::create_space),
+        )
         .route("/spaces/{id}", delete(spaces::delete_space))
         .route("/catalog", get(checkins::get_catalog))
-        .route("/checkins", get(checkins::list_checkins).post(checkins::create_checkin))
+        .route(
+            "/checkins",
+            get(checkins::list_checkins).post(checkins::create_checkin),
+        )
         .route("/checkins/{id}", get(checkins::get_checkin))
         .route("/checkins/{id}/decline", post(checkins::decline))
         .route("/checkins/{id}/accept", post(checkins::accept))
         .route("/checkins/{id}/outcome", post(checkins::record_outcome))
         .route("/checkins/{id}/abandon", post(checkins::abandon))
         .route("/playbook", get(checkins::playbook))
+        .route("/progress", get(checkins::progress))
         .route("/scan/photo", post(scan::scan_photo));
 
     Router::new()

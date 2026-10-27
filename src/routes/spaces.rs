@@ -29,7 +29,10 @@ pub struct NewSpace {
     kind: String,
 }
 
-pub async fn list_spaces(State(state): State<AppState>, user: AuthUser) -> AppResult<Json<Vec<Space>>> {
+pub async fn list_spaces(
+    State(state): State<AppState>,
+    user: AuthUser,
+) -> AppResult<Json<Vec<Space>>> {
     let spaces = sqlx::query_as(
         "SELECT id, name, kind, created_at FROM spaces WHERE user_id = $1 ORDER BY created_at",
     )
@@ -46,10 +49,14 @@ pub async fn create_space(
 ) -> AppResult<(StatusCode, Json<Space>)> {
     let name = body.name.trim();
     if name.is_empty() || name.chars().count() > 60 {
-        return Err(AppError::BadRequest("el nombre debe tener entre 1 y 60 caracteres".into()));
+        return Err(AppError::BadRequest(
+            "el nombre debe tener entre 1 y 60 caracteres".into(),
+        ));
     }
     if !matches!(body.kind.as_str(), "office" | "home" | "other") {
-        return Err(AppError::BadRequest("kind debe ser office, home u other".into()));
+        return Err(AppError::BadRequest(
+            "kind debe ser office, home u other".into(),
+        ));
     }
 
     let count: i64 = sqlx::query_scalar("SELECT count(*) FROM spaces WHERE user_id = $1")
@@ -57,7 +64,9 @@ pub async fn create_space(
         .fetch_one(&state.db)
         .await?;
     if count >= MAX_SPACES {
-        return Err(AppError::BadRequest(format!("máximo {MAX_SPACES} espacios")));
+        return Err(AppError::BadRequest(format!(
+            "máximo {MAX_SPACES} espacios"
+        )));
     }
 
     let space = sqlx::query_as(
