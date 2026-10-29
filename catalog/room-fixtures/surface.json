@@ -1,0 +1,41 @@
+{
+  "about": "Superficies: anfitrión inexistente, sin superficie, en la pared, encima de otro objeto o que no cupo; slots inválidos u ocupados; anfitrión que viene después y anfitrión de un tipo desconocido.",
+  "owned": ["desk_lamp"],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "oak", "wall": "cream", "window": { "wall": "right", "u": 4 } },
+    "items": [
+      { "uid": "d0000001", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "c0000001", "type": "chair", "variant": "teal", "place": { "on": "floor", "x": 0, "y": 2, "rot": 0 } },
+      { "uid": "f0000001", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 0, "row": 0 } },
+      { "uid": "l0000001", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "nadie001", "slot": 0 } },
+      { "uid": "l0000002", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "c0000001", "slot": 0 } },
+      { "uid": "l0000003", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "d0000001", "slot": 2 } },
+      { "uid": "l0000004", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "d0000001", "slot": 0 } },
+      { "uid": "m0000001", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "d0000001", "slot": 0 } },
+      { "uid": "m0000002", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "f0000001", "slot": 0 } },
+      { "uid": "m0000003", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "d0000009", "slot": 1 } },
+      { "uid": "m0000004", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "u0000001", "slot": 0 } },
+      { "uid": "l0000005", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "l0000004", "slot": 0 } },
+      { "uid": "m0000005", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "d0000001", "slot": -1 } },
+      { "uid": "d0000009", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 0, "y": 4, "rot": 0 } },
+      { "uid": "u0000001", "type": "bookcase", "variant": "tall", "place": { "on": "floor", "x": 3, "y": 3, "rot": 0 } },
+      { "uid": "d0000010", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 4, "y": 4, "rot": 0 } },
+      { "uid": "m0000006", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "d0000010", "slot": 0 } }
+    ],
+    "pinned": []
+  },
+  "problems": [
+    "items[2].type: not-owned",
+    "items[3].place: no-slot",
+    "items[4].place: no-slot",
+    "items[5].place: no-slot",
+    "items[7].place: occupied",
+    "items[8].place: no-slot",
+    "items[11].place: no-slot",
+    "items[12].place: no-slot",
+    "items[15].place: outside",
+    "items[16].place: no-slot"
+  ]
+}

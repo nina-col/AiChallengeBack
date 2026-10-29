@@ -1,0 +1,24 @@
+{
+  "about": "Un cuarto válido: muebles, alfombras debajo, objetos sobre el escritorio, pared, un tipo que el catálogo no conoce y corcho.",
+  "owned": ["desk_lamp", "ask_remote_focus"],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "oak", "wall": "teal", "window": { "wall": "right", "u": 2 } },
+    "items": [
+      { "uid": "k3f9q2ab", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 2, "y": 0, "rot": 0 } },
+      { "uid": "p1aa7c0d", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "k3f9q2ab", "slot": 1 } },
+      { "uid": "m0g00001", "type": "mug", "variant": "cream", "place": { "on": "surface", "host": "k3f9q2ab", "slot": 0 } },
+      { "uid": "c4a1r001", "type": "chair", "variant": "teal", "place": { "on": "floor", "x": 2, "y": 1, "rot": 2 } },
+      { "uid": "r0g00001", "type": "rug", "variant": "sage", "place": { "on": "floor", "x": 2, "y": 0, "rot": 0 } },
+      { "uid": "r0g00002", "type": "rug", "variant": "cream", "place": { "on": "floor", "x": 0, "y": 3, "rot": 0 } },
+      { "uid": "w7c2m9xe", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 1, "row": 1 } },
+      { "uid": "s4e1f001", "type": "shelf", "variant": "oak", "place": { "on": "wall", "wall": "right", "u": 0, "row": 2 } },
+      { "uid": "f0t0r001", "type": "aquarium", "variant": "blue", "place": { "on": "floor", "x": 2, "y": 0, "rot": 0 } },
+      { "uid": "l4mp0002", "type": "lamp", "variant": "warm", "place": { "on": "floor", "x": 4, "y": 4, "rot": 1 } },
+      { "uid": "d3sk0002", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 0, "y": 0, "rot": 1 } }
+    ],
+    "pinned": ["desk_lamp", "close_blinds"]
+  },
+  "problems": []
+}
