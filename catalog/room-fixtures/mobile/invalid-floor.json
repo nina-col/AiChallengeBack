@@ -1,0 +1,28 @@
+{
+  "description": "Colisiones en el piso y fuera del cuarto; las alfombras solo chocan entre ellas. Lo que no cabe no ocupa nada.",
+  "owned": [],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "oak", "wall": "teal", "window": { "wall": "right", "u": 2 } },
+    "items": [
+      { "uid": "aaaa0001", "type": "chair", "variant": "sage", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "aaaa0002", "type": "plant", "variant": "leaf", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "aaaa0003", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 3, "y": 0, "rot": 0 } },
+      { "uid": "aaaa0004", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 4, "y": 1, "rot": 0 } },
+      { "uid": "aaaa0005", "type": "rug", "variant": "sage", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "aaaa0006", "type": "rug", "variant": "cream", "place": { "on": "floor", "x": 1, "y": 1, "rot": 0 } },
+      { "uid": "aaaa0007", "type": "chair", "variant": "sage", "place": { "on": "floor", "x": -1, "y": 2, "rot": 0 } },
+      { "uid": "aaaa0008", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 3, "y": 3, "rot": 1 } },
+      { "uid": "aaaa0009", "type": "chair", "variant": "sage", "place": { "on": "floor", "x": 3, "y": 4, "rot": 1 } }
+    ],
+    "pinned": []
+  },
+  "problems": [
+    "items[1].place: occupied",
+    "items[3].place: outside",
+    "items[5].place: occupied",
+    "items[6].place: outside",
+    "items[8].place: occupied"
+  ]
+}

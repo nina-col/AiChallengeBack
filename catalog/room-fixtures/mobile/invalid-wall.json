@@ -1,0 +1,29 @@
+{
+  "description": "Paredes de 3 filas de 16 px: la columna de la ventana está reservada en todas las filas.",
+  "owned": ["ask_remote_focus"],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "oak", "wall": "teal", "window": { "wall": "right", "u": 2 } },
+    "items": [
+      { "uid": "bbbb0001", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "right", "u": 2, "row": 1 } },
+      { "uid": "bbbb0002", "type": "shelf", "variant": "oak", "place": { "on": "wall", "wall": "right", "u": 1, "row": 0 } },
+      { "uid": "bbbb0003", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 0, "row": 3 } },
+      { "uid": "bbbb0004", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 0, "row": 0 } },
+      { "uid": "bbbb0005", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 0, "row": 0 } },
+      { "uid": "bbbb0006", "type": "shelf", "variant": "oak", "place": { "on": "wall", "wall": "left", "u": 4, "row": 2 } },
+      { "uid": "bbbb0007", "type": "shelf", "variant": "oak", "place": { "on": "wall", "wall": "right", "u": 3, "row": 2 } },
+      { "uid": "bbbb0008", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "right", "u": 4, "row": 2 } },
+      { "uid": "bbbb0009", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "right", "u": 0, "row": 2 } }
+    ],
+    "pinned": []
+  },
+  "problems": [
+    "items[0].place: window",
+    "items[1].place: window",
+    "items[2].place: outside",
+    "items[4].place: occupied",
+    "items[5].place: outside",
+    "items[7].place: occupied"
+  ]
+}

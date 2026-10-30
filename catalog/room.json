@@ -121,6 +121,9 @@
       "variants": [
         "default"
       ],
+      "anim": {
+        "sway": 2
+      },
       "label": {
         "es": "Planta",
         "en": "Plant"
@@ -632,6 +635,9 @@
       "variants": [
         "default"
       ],
+      "anim": {
+        "sway": 2
+      },
       "label": {
         "es": "Helecho",
         "en": "Fern"
@@ -678,7 +684,8 @@
         "default"
       ],
       "anim": {
-        "wave": 2
+        "wave": 2,
+        "blink": 2
       },
       "label": {
         "es": "Castor",

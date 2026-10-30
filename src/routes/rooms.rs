@@ -69,8 +69,9 @@ pub async fn put_room(
         return Err(AppError::NotFound);
     }
 
-    let owned_adjustments = tried_adjustments(&state.db, user.id).await?;
-    let layout = match room::validate(&body.layout, ROOM_CATALOG.as_ref(), &owned_adjustments) {
+    // Los objetos que tiene la persona salen de los ajustes que ya probó.
+    let tried = tried_adjustments(&state.db, user.id).await?;
+    let layout = match room::validate(&body.layout, ROOM_CATALOG.as_ref(), &tried) {
         Ok(layout) => layout,
         // Un acomodo de una app más nueva no se toca: guardarlo con estas reglas perdería datos.
         Err(problems) if problems.iter().any(|p| p == UNSUPPORTED) => {
