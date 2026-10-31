@@ -195,7 +195,10 @@
       ],
       "height": 6,
       "adjustments": [
-        "clear_desk"
+        "clear_desk",
+        "pick_three",
+        "split_checklist",
+        "easiest_first"
       ],
       "variants": [
         "default"
@@ -203,6 +206,35 @@
       "label": {
         "es": "Bandeja ordenada",
         "en": "Tidy tray"
+      }
+    },
+    "notebook": {
+      "place": [
+        "surface"
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "facings": [
+        0,
+        3
+      ],
+      "height": 6,
+      "adjustments": [
+        "two_minute_start",
+        "write_it_out",
+        "new_first_step",
+        "repeat_back",
+        "check_it_out",
+        "ask_written"
+      ],
+      "variants": [
+        "default"
+      ],
+      "label": {
+        "es": "Cuaderno",
+        "en": "Notebook"
       }
     },
     "divider": {
@@ -319,7 +351,8 @@
       "height": 17,
       "adjustments": [
         "cooler_spot",
-        "ask_temperature"
+        "ask_temperature",
+        "ventilate"
       ],
       "variants": [
         "default"
@@ -348,7 +381,9 @@
         "move_from_voices",
         "book_quiet_room",
         "move_from_smell",
-        "ask_quiet_desk"
+        "ask_quiet_desk",
+        "avoid_peak",
+        "ask_flexible_start"
       ],
       "variants": [
         "default"
@@ -372,7 +407,8 @@
       ],
       "height": 5,
       "adjustments": [
-        "short_reset"
+        "short_reset",
+        "transition_pause"
       ],
       "variants": [
         "default"
@@ -400,7 +436,9 @@
       "height": 10,
       "adjustments": [
         "focus_signal",
-        "ask_focus_hours"
+        "ask_focus_hours",
+        "time_block",
+        "ask_notice_changes"
       ],
       "variants": [
         "default"
@@ -425,7 +463,9 @@
       "height": 10,
       "adjustments": [
         "silence_notifications",
-        "batch_messages"
+        "batch_messages",
+        "hide_self_view",
+        "ask_camera_off"
       ],
       "variants": [
         "default"
