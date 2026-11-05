@@ -1,0 +1,18 @@
+{
+  "description": "Tipos que ya no están en el catálogo: se conservan, no chocan y no se validan, ni lo que tienen encima.",
+  "owned": ["desk_lamp"],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "oak", "wall": "teal", "window": { "wall": "right", "u": 2 } },
+    "items": [
+      { "uid": "a1b2c3d4", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "u1u2u3u4", "type": "aquarium", "variant": "blue", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "j0j0j0j0", "type": "jukebox", "variant": "red", "place": { "on": "floor", "x": 3, "y": 3, "rot": 0 } },
+      { "uid": "l1l1l1l1", "type": "lamp", "variant": "warm", "place": { "on": "surface", "host": "j0j0j0j0", "slot": 0 } },
+      { "uid": "p0p0p0p0", "type": "poster", "variant": "x", "place": { "on": "wall", "wall": "right", "u": 2, "row": 1 } }
+    ],
+    "pinned": []
+  },
+  "problems": []
+}

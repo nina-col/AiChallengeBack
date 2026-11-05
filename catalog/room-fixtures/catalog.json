@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "size": { "w": 5, "d": 5 },
+  "shell": { "floors": ["oak", "oak_dark", "tile"], "walls": ["teal", "sage", "cream"] },
+  "types": {
+    "desk": {
+      "place": ["floor"], "footprint": [2, 1], "facings": [0, 1], "height": 14,
+      "surface": { "z": 14, "slots": [[0, 0], [1, 0]] }, "base": true, "variants": ["oak"],
+      "label": { "es": "Escritorio", "en": "Desk" }
+    },
+    "chair": {
+      "place": ["floor"], "footprint": [1, 1], "facings": [0, 1, 2, 3], "height": 12, "base": true,
+      "variants": ["teal"], "label": { "es": "Silla", "en": "Chair" }
+    },
+    "lamp": {
+      "place": ["surface", "floor"], "footprint": [1, 1], "facings": [0, 1], "height": 12,
+      "adjustments": ["desk_lamp", "ask_lighting"], "variants": ["warm"],
+      "label": { "es": "Lámpara", "en": "Lamp" }
+    },
+    "mug": {
+      "place": ["surface"], "footprint": [1, 1], "facings": [0], "height": 5, "decor": true,
+      "variants": ["cream"], "anim": { "steam": 2 }, "label": { "es": "Taza", "en": "Mug" }
+    },
+    "rug": {
+      "place": ["floor"], "footprint": [2, 2], "facings": [0], "flat": true, "decor": true, "height": 1,
+      "variants": ["terracotta", "sage", "cream"], "label": { "es": "Alfombra", "en": "Rug" }
+    },
+    "frame": {
+      "place": ["wall"], "footprint": [1, 1], "facings": [0], "height": 16,
+      "adjustments": ["ask_remote_focus"], "variants": ["home"], "label": { "es": "Cuadro", "en": "Frame" }
+    },
+    "shelf": {
+      "place": ["wall"], "footprint": [2, 1], "facings": [0], "height": 16, "decor": true,
+      "variants": ["oak"], "label": { "es": "Repisa", "en": "Shelf" }
+    },
+    "blinds": {
+      "place": [], "footprint": [1, 1], "facings": [0], "height": 0, "modifies": "window",
+      "adjustments": ["close_blinds"], "variants": ["cream"], "label": { "es": "Persiana", "en": "Blinds" }
+    }
+  }
+}

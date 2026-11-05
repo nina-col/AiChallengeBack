@@ -1,0 +1,17 @@
+{
+  "about": "Cascarón y corcho: piso y pared desconocidos, ventana fuera de su pared (la derecha mide w) y un fijado que no es un id de ajuste.",
+  "owned": [],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "marble", "wall": "pink", "window": { "wall": "right", "u": 5 } },
+    "items": [],
+    "pinned": ["desk_lamp", "Desk Lamp"]
+  },
+  "problems": [
+    "shell.floor: unknown-variant",
+    "shell.wall: unknown-variant",
+    "shell.window: outside",
+    "pinned: invalid"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "description": "Piso y pared fuera del catálogo, ventana fuera de su pared (entonces no reserva nada) y corcho con ids repetidos o mal formados.",
+  "owned": ["ask_remote_focus"],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "marble", "wall": "pink", "window": { "wall": "left", "u": 5 } },
+    "items": [
+      { "uid": "eeee0001", "type": "chair", "variant": "sage", "place": { "on": "floor", "x": 2, "y": 2, "rot": 0 } },
+      { "uid": "eeee0002", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 4, "row": 1 } }
+    ],
+    "pinned": ["desk_lamp", "desk_lamp", "Bad-Id"]
+  },
+  "problems": ["shell.floor: unknown-variant", "shell.wall: unknown-variant", "shell.window: outside", "pinned: invalid"]
+}

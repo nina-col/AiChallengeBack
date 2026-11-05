@@ -1,0 +1,19 @@
+{
+  "description": "Sala válida: escritorio con pantalla y planta, silla enfrente, alfombra debajo, cuadro y ventana.",
+  "owned": ["ask_remote_focus", "no_change"],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "oak", "wall": "teal", "window": { "wall": "right", "u": 3 } },
+    "items": [
+      { "uid": "k3f9q2ab", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 1, "y": 0, "rot": 0 } },
+      { "uid": "p1aa7c0d", "type": "monitor", "variant": "ink", "place": { "on": "surface", "host": "k3f9q2ab", "slot": 0 } },
+      { "uid": "m2bb8d1e", "type": "plant", "variant": "leaf", "place": { "on": "surface", "host": "k3f9q2ab", "slot": 1 } },
+      { "uid": "c4cc9e2f", "type": "chair", "variant": "sage", "place": { "on": "floor", "x": 1, "y": 1, "rot": 2 } },
+      { "uid": "r5dd0f3g", "type": "rug", "variant": "cream", "place": { "on": "floor", "x": 1, "y": 1, "rot": 0 } },
+      { "uid": "w7c2m9xe", "type": "frame", "variant": "home", "place": { "on": "wall", "wall": "left", "u": 1, "row": 1 } }
+    ],
+    "pinned": ["desk_lamp"]
+  },
+  "problems": []
+}

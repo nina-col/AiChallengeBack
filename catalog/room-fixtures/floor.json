@@ -1,0 +1,29 @@
+{
+  "about": "Piso: bordes, choques entre muebles, alfombras que se pisan entre sí y giros no permitidos. Lo que no cabe no ocupa: la silla 7 cabe donde iba el escritorio girado de más.",
+  "owned": [],
+  "layout": {
+    "v": 1,
+    "size": { "w": 5, "d": 5 },
+    "shell": { "floor": "tile", "wall": "sage", "window": { "wall": "left", "u": 0 } },
+    "items": [
+      { "uid": "d0000001", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 4, "y": 0, "rot": 0 } },
+      { "uid": "d0000002", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 0, "y": 0, "rot": 1 } },
+      { "uid": "c0000001", "type": "chair", "variant": "teal", "place": { "on": "floor", "x": 0, "y": 1, "rot": 0 } },
+      { "uid": "d0000003", "type": "desk", "variant": "oak", "place": { "on": "floor", "x": 1, "y": 3, "rot": 2 } },
+      { "uid": "r0000001", "type": "rug", "variant": "sage", "place": { "on": "floor", "x": 0, "y": 0, "rot": 0 } },
+      { "uid": "r0000002", "type": "rug", "variant": "sage", "place": { "on": "floor", "x": 1, "y": 1, "rot": 0 } },
+      { "uid": "r0000003", "type": "rug", "variant": "purple", "place": { "on": "floor", "x": 3, "y": 3, "rot": 0 } },
+      { "uid": "c0000002", "type": "chair", "variant": "teal", "place": { "on": "floor", "x": 2, "y": 3, "rot": 0 } },
+      { "uid": "c0000003", "type": "chair", "variant": "teal", "place": { "on": "floor", "x": -1, "y": 0, "rot": 0 } }
+    ],
+    "pinned": []
+  },
+  "problems": [
+    "items[0].place: outside",
+    "items[2].place: occupied",
+    "items[3].place: facing",
+    "items[5].place: occupied",
+    "items[6].variant: unknown-variant",
+    "items[8].place: outside"
+  ]
+}

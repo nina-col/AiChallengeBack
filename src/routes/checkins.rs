@@ -13,9 +13,10 @@ use crate::{
     AppState,
     auth::AuthUser,
     catalog::{
-        AdjustmentKind, BASELINE_ID, CATALOG, Locale, LocalizedAdjustment, LocalizedCatalog,
+        Adjustment, AdjustmentKind, BASELINE_ID, CATALOG, Locale, LocalizedAdjustment,
+        LocalizedCatalog,
     },
-    engine::{self, Arm, ArmEvidence, EXPLORATION, Evidence, Reason},
+    engine::{self, Arm, ArmEvidence, EXPLORATION, Evidence, Here, OwnTrial, Reason},
     error::{AppError, AppResult},
 };
 
@@ -143,6 +144,8 @@ enum ReasonView {
     },
     /// Registro de comparación sin ajuste.
     Comparison,
+    /// "Usarlo otra vez": la persona lo eligió de lo que sabe de un lugar.
+    Chosen,
 }
 
 #[derive(Serialize)]
@@ -174,6 +177,8 @@ pub struct NewCheckin {
     #[serde(default)]
     observations: Vec<NewObservation>,
     focus_stimulus: Option<String>,
+    /// "Usarlo otra vez": se propone este ajuste sin pasar por el motor.
+    adjustment_id: Option<String>,
 }
 
 pub async fn create_checkin(
@@ -213,6 +218,20 @@ pub async fn create_checkin(
             ));
         }
     }
+    // "Usarlo otra vez": un ajuste del catálogo que la persona eligió.
+    let chosen: Option<&'static Adjustment> = match body.adjustment_id.as_deref() {
+        None => None,
+        Some(BASELINE_ID) => {
+            return Err(AppError::BadRequest(
+                "la comparación sin ajuste no se elige: la propone la app".into(),
+            ));
+        }
+        Some(id) => Some(
+            CATALOG
+                .adjustment(id)
+                .ok_or_else(|| AppError::BadRequest(format!("ajuste desconocido: {id}")))?,
+        ),
+    };
     if let Some(space_id) = body.space_id {
         let owned: bool = sqlx::query_scalar(
             "SELECT EXISTS (SELECT 1 FROM spaces WHERE id = $1 AND user_id = $2)",
@@ -225,6 +244,18 @@ pub async fn create_checkin(
             return Err(AppError::NotFound);
         }
     }
+    let blocked = match chosen {
+        Some(_) => blocked_in(&state, body.space_id).await?,
+        None => Vec::new(),
+    };
+    if let Some(adjustment) = chosen
+        && blocked.contains(&adjustment.id)
+    {
+        return Err(AppError::BadRequest(format!(
+            "{} está marcado como \"no puedo aquí\" en este lugar",
+            adjustment.id
+        )));
+    }
 
     // El foco es lo que la persona eligió; si solo marcó una cosa que le afecta, es esa.
     let affecting: Vec<&str> = body
@@ -233,16 +264,17 @@ pub async fn create_checkin(
         .filter(|o| o.response == "yes")
         .map(|o| o.stimulus.as_str())
         .collect();
-    let focus = match body.focus_stimulus.as_deref() {
-        Some(focus) if affecting.contains(&focus) => Some(focus.to_owned()),
-        Some(focus) => {
+    let focus = match (chosen, body.focus_stimulus.as_deref()) {
+        (Some(adjustment), given) => chosen_focus(adjustment, given, &affecting)?,
+        (None, Some(focus)) if affecting.contains(&focus) => Some(focus.to_owned()),
+        (None, Some(focus)) => {
             return Err(AppError::BadRequest(format!(
                 "focus_stimulus debe ser algo que la persona marcó: {focus}"
             )));
         }
-        None if affecting.len() == 1 => Some(affecting[0].to_owned()),
-        None if affecting.is_empty() => None,
-        None => {
+        (None, None) if affecting.len() == 1 => Some(affecting[0].to_owned()),
+        (None, None) if affecting.is_empty() => None,
+        (None, None) => {
             return Err(AppError::BadRequest(
                 "hay varios estímulos: falta focus_stimulus".into(),
             ));
@@ -252,8 +284,9 @@ pub async fn create_checkin(
     let mut tx = state.db.begin().await?;
     let id: Uuid = sqlx::query_scalar(
         "INSERT INTO checkins
-            (user_id, space_id, task, feeling, effort_before, discomfort_before, focus_stimulus)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+            (user_id, space_id, task, feeling, effort_before, discomfort_before, focus_stimulus,
+             adjustment_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
     )
     .bind(user.id)
     .bind(body.space_id)
@@ -262,6 +295,7 @@ pub async fn create_checkin(
     .bind(body.effort_before)
     .bind(body.discomfort_before)
     .bind(&focus)
+    .bind(chosen.map(|a| &a.id))
     .fetch_one(&mut *tx)
     .await?;
     for obs in &body.observations {
@@ -278,12 +312,59 @@ pub async fn create_checkin(
     tx.commit().await?;
 
     let row = load(&state, user.id, id).await?;
+    if let Some(adjustment) = chosen {
+        // Lo eligió la persona: no pasa por el motor ni por la comparación sin ajuste.
+        let alternatives = row.focus_stimulus.as_deref().map_or(0, |stimulus| {
+            candidates(stimulus, &row.task, &[], &blocked)
+                .iter()
+                .filter(|a| a.id != adjustment.id)
+                .count()
+        });
+        return Ok(Json(CheckinWithProposal {
+            checkin: view(row, user.locale),
+            proposal: Some(Proposal {
+                adjustment: adjustment.localized(user.locale),
+                reason: ReasonView::Chosen,
+                alternatives,
+            }),
+        }));
+    }
     let proposal = propose(&state, user.id, user.locale, &row).await?;
     let row = load(&state, user.id, id).await?;
     Ok(Json(CheckinWithProposal {
         checkin: view(row, user.locale),
         proposal,
     }))
+}
+
+/// Foco de "Usarlo otra vez": el que manda la app, que debe ser uno de los estímulos del ajuste.
+/// Si no manda ninguno: el único estímulo del ajuste que la persona marcó o, si no marcó ninguno,
+/// el único que atiende el ajuste. Sin foco la prueba cuenta igual, pero no le enseña al motor.
+fn chosen_focus(
+    adjustment: &Adjustment,
+    given: Option<&str>,
+    affecting: &[&str],
+) -> AppResult<Option<String>> {
+    let attends = |stimulus: &str| adjustment.stimuli.iter().any(|s| s == stimulus);
+    if let Some(focus) = given {
+        return if attends(focus) {
+            Ok(Some(focus.to_owned()))
+        } else {
+            Err(AppError::BadRequest(format!(
+                "focus_stimulus debe ser uno de los estímulos de {}: {focus}",
+                adjustment.id
+            )))
+        };
+    }
+    let marked: Vec<&str> = affecting.iter().copied().filter(|s| attends(s)).collect();
+    match (marked.as_slice(), adjustment.stimuli.as_slice()) {
+        ([one], _) => Ok(Some((*one).to_owned())),
+        ([], [only]) => Ok(Some(only.clone())),
+        ([], _) => Ok(None),
+        _ => Err(AppError::BadRequest(
+            "hay varios estímulos: falta focus_stimulus".into(),
+        )),
+    }
 }
 
 #[derive(Deserialize)]
@@ -445,12 +526,15 @@ pub async fn record_outcome(
     .await?;
 
     let row = load(&state, user.id, id).await?;
+    // "Aquí" es lo mismo que el nivel exacto del motor: después de "Este lugar cambió", si lo hubo.
     let (helped, trials): (i64, i64) = sqlx::query_as(
-        "SELECT count(*) FILTER (WHERE outcome = 'helped'),
-                count(*) FILTER (WHERE outcome IN ('helped', 'not_helped'))
-         FROM checkins
-         WHERE user_id = $1 AND adjustment_id = $2 AND focus_stimulus IS NOT DISTINCT FROM $3
-           AND task = $4 AND space_id IS NOT DISTINCT FROM $5",
+        "SELECT count(*) FILTER (WHERE c.outcome = 'helped'),
+                count(*) FILTER (WHERE c.outcome IN ('helped', 'not_helped'))
+         FROM checkins c LEFT JOIN spaces s ON s.id = c.space_id
+         WHERE c.user_id = $1 AND c.adjustment_id = $2
+           AND c.focus_stimulus IS NOT DISTINCT FROM $3
+           AND c.task = $4 AND c.space_id IS NOT DISTINCT FROM $5
+           AND (s.reset_at IS NULL OR c.completed_at > s.reset_at)",
     )
     .bind(user.id)
     .bind(&row.adjustment_id)
@@ -562,19 +646,25 @@ pub async fn progress(State(state): State<AppState>, user: AuthUser) -> AppResul
             .bind(user.id)
             .fetch_one(&state.db)
             .await?;
-    let tried: Vec<String> = sqlx::query_scalar(
+    let tried = tried_adjustments(&state.db, user.id).await?;
+    Ok(Json(Progress {
+        trials: count(trials),
+        tried,
+    }))
+}
+
+/// Ajustes distintos que la persona ya probó, del primero al más reciente. Son también los que le
+/// dan objetos para sus cuartos.
+pub(super) async fn tried_adjustments(db: &sqlx::PgPool, user_id: Uuid) -> AppResult<Vec<String>> {
+    Ok(sqlx::query_scalar(
         "SELECT adjustment_id FROM checkins
          WHERE user_id = $1 AND status = 'done' AND adjustment_id IS NOT NULL AND adjustment_id <> 'no_change'
          GROUP BY adjustment_id
          ORDER BY min(completed_at)",
     )
-    .bind(user.id)
-    .fetch_all(&state.db)
-    .await?;
-    Ok(Json(Progress {
-        trials: count(trials),
-        tried,
-    }))
+    .bind(user_id)
+    .fetch_all(db)
+    .await?)
 }
 
 /// Mis ajustes: lo que ha ayudado al menos una vez, por tarea, lugar y estímulo.
@@ -628,15 +718,144 @@ async fn load(state: &AppState, user_id: Uuid, id: Uuid) -> AppResult<CheckinRow
         .ok_or(AppError::NotFound)
 }
 
+/// "No puedo hacerlo aquí": lo que no se propone en ese lugar.
+async fn blocked_in(state: &AppState, space_id: Option<Uuid>) -> AppResult<Vec<String>> {
+    match space_id {
+        Some(space_id) => Ok(sqlx::query_scalar(
+            "SELECT adjustment_id FROM space_blocks WHERE space_id = $1",
+        )
+        .bind(space_id)
+        .fetch_all(&state.db)
+        .await?),
+        None => Ok(Vec::new()),
+    }
+}
+
+/// Lo que se puede proponer para un estímulo en una tarea. En el momento se proponen cosas que la
+/// persona puede hacer ya; pedir a la empresa queda para cuando no queda nada propio que probar.
+fn candidates(
+    stimulus: &str,
+    task: &str,
+    declined: &[String],
+    blocked: &[String],
+) -> Vec<&'static Adjustment> {
+    let available: Vec<&'static Adjustment> = CATALOG
+        .adjustments
+        .iter()
+        .filter(|a| a.fits(stimulus, task))
+        .filter(|a| !declined.contains(&a.id) && !blocked.contains(&a.id))
+        .collect();
+    let has_self = available
+        .iter()
+        .any(|a| a.kind == AdjustmentKind::SelfServe);
+    available
+        .into_iter()
+        .filter(|a| !has_self || a.kind == AdjustmentKind::SelfServe)
+        .collect()
+}
+
 #[derive(sqlx::FromRow)]
-struct EvidenceRow {
+struct OwnTrialRow {
     adjustment_id: String,
-    exact_helped: i64,
-    exact_not: i64,
-    person_helped: i64,
-    person_not: i64,
-    global_helped: i64,
-    global_not: i64,
+    task: String,
+    space_id: Option<Uuid>,
+    completed_at: DateTime<Utc>,
+    helped: bool,
+}
+
+#[derive(sqlx::FromRow)]
+struct GlobalRow {
+    adjustment_id: String,
+    helped: i64,
+    not_helped: i64,
+}
+
+/// Personas distintas que hacen falta para usar solo los lugares del mismo tipo (k-anonimato).
+const KIND_MIN_PEOPLE: i64 = 5;
+
+/// Evidencia de cada ajuste para este estímulo en los niveles del motor (ver `engine`).
+async fn evidence(
+    state: &AppState,
+    user_id: Uuid,
+    stimulus: &str,
+    row: &CheckinRow,
+) -> AppResult<HashMap<String, ArmEvidence>> {
+    let place: Option<(Option<DateTime<Utc>>, String)> = match row.space_id {
+        Some(space_id) => {
+            sqlx::query_as("SELECT reset_at, kind FROM spaces WHERE id = $1")
+                .bind(space_id)
+                .fetch_optional(&state.db)
+                .await?
+        }
+        None => None,
+    };
+    let (reset_at, kind) = match place {
+        Some((reset_at, kind)) => (reset_at, Some(kind)),
+        None => (None, None),
+    };
+    let here = Here {
+        task: &row.task,
+        space_id: row.space_id,
+        reset_at,
+    };
+
+    let mut evidence: HashMap<String, ArmEvidence> = HashMap::new();
+    let own: Vec<OwnTrialRow> = sqlx::query_as(
+        "SELECT adjustment_id, task, space_id, COALESCE(completed_at, created_at) AS completed_at,
+                outcome = 'helped' AS helped
+         FROM checkins
+         WHERE user_id = $1 AND focus_stimulus = $2 AND adjustment_id IS NOT NULL
+           AND outcome IN ('helped', 'not_helped')",
+    )
+    .bind(user_id)
+    .bind(stimulus)
+    .fetch_all(&state.db)
+    .await?;
+    let now = Utc::now();
+    for t in &own {
+        let trial = OwnTrial {
+            task: &t.task,
+            space_id: t.space_id,
+            completed_at: t.completed_at,
+            helped: t.helped,
+        };
+        evidence
+            .entry(t.adjustment_id.clone())
+            .or_default()
+            .add_own(&here, &trial, now);
+    }
+
+    // Otras personas: solo las de lugares del mismo tipo (oficina, casa…) si son al menos
+    // KIND_MIN_PEOPLE; si no, todas. Nunca se le muestra a nadie lo de otra persona.
+    let global: Vec<GlobalRow> = sqlx::query_as(
+        "WITH others AS (
+             SELECT c.adjustment_id, c.outcome, c.user_id, s.kind
+             FROM checkins c LEFT JOIN spaces s ON s.id = c.space_id
+             WHERE c.focus_stimulus = $2 AND c.user_id <> $1 AND c.adjustment_id IS NOT NULL
+               AND c.outcome IN ('helped', 'not_helped')
+         ), same_kind AS (
+             SELECT count(DISTINCT user_id) >= $4 AS enough FROM others WHERE kind = $3
+         )
+         SELECT adjustment_id,
+                count(*) FILTER (WHERE outcome = 'helped') AS helped,
+                count(*) FILTER (WHERE outcome = 'not_helped') AS not_helped
+         FROM others, same_kind
+         WHERE NOT same_kind.enough OR others.kind = $3
+         GROUP BY adjustment_id",
+    )
+    .bind(user_id)
+    .bind(stimulus)
+    .bind(kind)
+    .bind(KIND_MIN_PEOPLE)
+    .fetch_all(&state.db)
+    .await?;
+    for g in global {
+        evidence.entry(g.adjustment_id).or_default().global = Evidence {
+            helped: count(g.helped),
+            not_helped: count(g.not_helped),
+        };
+    }
+    Ok(evidence)
 }
 
 /// Elige el siguiente ajuste para el registro y lo guarda. `None` si no hay estímulo o ya no quedan ideas.
@@ -664,66 +883,13 @@ async fn propose(
             alternatives: 1,
         }));
     }
-    let blocked: Vec<String> = match row.space_id {
-        Some(space_id) => {
-            sqlx::query_scalar("SELECT adjustment_id FROM space_blocks WHERE space_id = $1")
-                .bind(space_id)
-                .fetch_all(&state.db)
-                .await?
-        }
-        None => Vec::new(),
-    };
-    let available: Vec<_> = CATALOG
-        .adjustments
-        .iter()
-        .filter(|a| a.fits(stimulus, &row.task))
-        .filter(|a| !row.declined.contains(&a.id) && !blocked.contains(&a.id))
-        .collect();
-    // En el momento se proponen cosas que la persona puede hacer ya; pedir a la empresa queda
-    // para cuando no queda nada propio que probar.
-    let has_self = available
-        .iter()
-        .any(|a| a.kind == AdjustmentKind::SelfServe);
-    let candidates: Vec<_> = available
-        .into_iter()
-        .filter(|a| !has_self || a.kind == AdjustmentKind::SelfServe)
-        .collect();
+    let blocked = blocked_in(state, row.space_id).await?;
+    let candidates = candidates(stimulus, &row.task, &row.declined, &blocked);
     if candidates.is_empty() {
         return Ok(None);
     }
 
-    let evidence: HashMap<String, ArmEvidence> = sqlx::query_as::<_, EvidenceRow>(
-        "SELECT adjustment_id,
-           count(*) FILTER (WHERE user_id = $1 AND task = $3 AND space_id IS NOT DISTINCT FROM $4 AND outcome = 'helped') AS exact_helped,
-           count(*) FILTER (WHERE user_id = $1 AND task = $3 AND space_id IS NOT DISTINCT FROM $4 AND outcome = 'not_helped') AS exact_not,
-           count(*) FILTER (WHERE user_id = $1 AND outcome = 'helped') AS person_helped,
-           count(*) FILTER (WHERE user_id = $1 AND outcome = 'not_helped') AS person_not,
-           count(*) FILTER (WHERE outcome = 'helped') AS global_helped,
-           count(*) FILTER (WHERE outcome = 'not_helped') AS global_not
-         FROM checkins
-         WHERE focus_stimulus = $2 AND adjustment_id IS NOT NULL AND outcome IN ('helped', 'not_helped')
-         GROUP BY adjustment_id",
-    )
-    .bind(user_id)
-    .bind(stimulus)
-    .bind(&row.task)
-    .bind(row.space_id)
-    .fetch_all(&state.db)
-    .await?
-    .into_iter()
-    .map(|e| {
-        let ev = |helped, not_helped| Evidence { helped: count(helped), not_helped: count(not_helped) };
-        (
-            e.adjustment_id,
-            ArmEvidence {
-                exact: ev(e.exact_helped, e.exact_not),
-                person: ev(e.person_helped, e.person_not),
-                global: ev(e.global_helped, e.global_not),
-            },
-        )
-    })
-    .collect();
-
+    let evidence = evidence(state, user_id, stimulus, row).await?;
     let arms: Vec<Arm> = candidates
         .iter()
         .map(|a| Arm {
@@ -835,7 +1001,7 @@ fn check_scale(value: i16) -> AppResult<()> {
     }
 }
 
-fn count(n: i64) -> u32 {
+pub(super) fn count(n: i64) -> u32 {
     u32::try_from(n).unwrap_or(u32::MAX)
 }
 

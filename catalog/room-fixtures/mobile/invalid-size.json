@@ -1,0 +1,12 @@
+{
+  "description": "Cuarto más grande que LIMITS.maxSize (8). Se detiene ahí.",
+  "owned": [],
+  "layout": {
+    "v": 1,
+    "size": { "w": 9, "d": 5 },
+    "shell": { "floor": "oak", "wall": "teal", "window": { "wall": "right", "u": 2 } },
+    "items": [],
+    "pinned": []
+  },
+  "problems": ["size: invalid"]
+}
