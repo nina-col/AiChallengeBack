@@ -1,7 +1,6 @@
 mod account;
 mod checkins;
 mod health;
-mod rooms;
 mod scan;
 mod spaces;
 
@@ -31,12 +30,6 @@ pub fn router(state: AppState) -> Router {
             get(spaces::list_spaces).post(spaces::create_space),
         )
         .route("/spaces/{id}", delete(spaces::delete_space))
-        .route("/spaces/{id}/memory", get(spaces::memory))
-        .route("/spaces/{id}/reset", post(spaces::reset_space))
-        .route(
-            "/spaces/{id}/room",
-            get(rooms::get_room).put(rooms::put_room),
-        )
         .route("/catalog", get(checkins::get_catalog))
         .route(
             "/checkins",

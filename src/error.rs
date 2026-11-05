@@ -13,14 +13,6 @@ pub enum AppError {
     NotFound,
     #[error("{0}")]
     BadRequest(String),
-    /// Otra pantalla guardó antes; va la revisión actual para combinar.
-    #[error("otra pantalla guardó este cuarto antes")]
-    Conflict { revision: i32 },
-    /// El acomodo no cumple las reglas; van todos los problemas, no solo el primero.
-    #[error("el cuarto tiene problemas")]
-    InvalidLayout(Vec<String>),
-    #[error("este cuarto es de una versión más nueva de la app; actualiza la app para editarlo")]
-    UpdateApp,
     #[error("el análisis con IA no está disponible ahora; sigue con las preguntas")]
     Unavailable,
     #[error("llegaste al límite de análisis de hoy; sigue con las preguntas")]
@@ -37,9 +29,6 @@ impl IntoResponse for AppError {
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "unauthorized"),
             AppError::NotFound => (StatusCode::NOT_FOUND, "not_found"),
             AppError::BadRequest(_) => (StatusCode::BAD_REQUEST, "bad_request"),
-            AppError::Conflict { .. } => (StatusCode::CONFLICT, "conflict"),
-            AppError::InvalidLayout(_) => (StatusCode::UNPROCESSABLE_ENTITY, "invalid_layout"),
-            AppError::UpdateApp => (StatusCode::UNPROCESSABLE_ENTITY, "update_app"),
             AppError::Unavailable => (StatusCode::SERVICE_UNAVAILABLE, "ai_unavailable"),
             AppError::TooManyRequests => (StatusCode::TOO_MANY_REQUESTS, "daily_limit"),
             AppError::Database(err) => {
@@ -52,12 +41,6 @@ impl IntoResponse for AppError {
             AppError::Database(_) => "error interno".to_owned(),
             other => other.to_string(),
         };
-        let mut body = json!({ "error": code, "message": message });
-        match self {
-            AppError::Conflict { revision } => body["revision"] = json!(revision),
-            AppError::InvalidLayout(problems) => body["problems"] = json!(problems),
-            _ => {}
-        }
-        (status, Json(body)).into_response()
+        (status, Json(json!({ "error": code, "message": message }))).into_response()
     }
 }

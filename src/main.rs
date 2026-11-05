@@ -4,7 +4,6 @@ mod claude;
 mod config;
 mod engine;
 mod error;
-mod room;
 mod routes;
 
 use std::{sync::Arc, time::Duration};
@@ -42,21 +41,6 @@ async fn main() -> anyhow::Result<()> {
         "catalog.json inválido:\n{}",
         problems.join("\n")
     );
-    // El catálogo del cuarto puede faltar mientras se genera; si está, tiene que estar bien.
-    match room::ROOM_CATALOG.as_ref() {
-        Some(rooms) => {
-            let problems = room::catalog_problems(rooms);
-            anyhow::ensure!(
-                problems.is_empty(),
-                "room.json inválido:\n{}",
-                problems.join("\n")
-            );
-            tracing::info!(types = rooms.types.len(), "catálogo del cuarto cargado");
-        }
-        None => tracing::warn!(
-            "sin catalog/room.json: los cuartos se validan solo por su forma, sin catálogo de objetos"
-        ),
-    }
 
     let db = PgPoolOptions::new()
         .max_connections(5)

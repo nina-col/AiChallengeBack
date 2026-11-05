@@ -137,9 +137,7 @@
       "stimuli": [
         "visual_clutter",
         "movement",
-        "interruptions",
-        "crowding",
-        "on_camera"
+        "interruptions"
       ]
     },
     {
@@ -151,22 +149,7 @@
       "stimuli": [
         "too_warm",
         "too_cold",
-        "smells",
-        "humidity"
-      ]
-    },
-    {
-      "id": "inner",
-      "question": {
-        "es": "¿Qué se parece más a lo que pasa?",
-        "en": "What's closest to what's going on?"
-      },
-      "stimuli": [
-        "hard_to_start",
-        "too_many_tasks",
-        "on_my_mind",
-        "plan_changed",
-        "unclear_task"
+        "smells"
       ]
     }
   ],
@@ -274,70 +257,6 @@
         "es": "Olores fuertes",
         "en": "Strong smells"
       }
-    },
-    {
-      "id": "hard_to_start",
-      "domain": "inner",
-      "label": {
-        "es": "No sé por dónde empezar",
-        "en": "I don't know where to start"
-      }
-    },
-    {
-      "id": "too_many_tasks",
-      "domain": "inner",
-      "label": {
-        "es": "Tengo demasiadas cosas pendientes",
-        "en": "I have too many things pending"
-      }
-    },
-    {
-      "id": "on_my_mind",
-      "domain": "inner",
-      "label": {
-        "es": "Algo me da vueltas en la cabeza",
-        "en": "Something keeps going round in my head"
-      }
-    },
-    {
-      "id": "plan_changed",
-      "domain": "inner",
-      "label": {
-        "es": "Me cambiaron el plan o algo surgió de último momento",
-        "en": "My plan changed or something came up last minute"
-      }
-    },
-    {
-      "id": "unclear_task",
-      "domain": "inner",
-      "label": {
-        "es": "No me queda claro qué me piden",
-        "en": "It's not clear what's being asked of me"
-      }
-    },
-    {
-      "id": "crowding",
-      "domain": "sight",
-      "label": {
-        "es": "Mucha gente alrededor o lugares llenos",
-        "en": "Lots of people around or crowded places"
-      }
-    },
-    {
-      "id": "on_camera",
-      "domain": "sight",
-      "label": {
-        "es": "Estar en cámara me distrae",
-        "en": "Being on camera distracts me"
-      }
-    },
-    {
-      "id": "humidity",
-      "domain": "body",
-      "label": {
-        "es": "El aire se siente húmedo o pesado",
-        "en": "The air feels humid or heavy"
-      }
     }
   ],
   "adjustments": [
@@ -421,8 +340,7 @@
       "id": "move_from_voices",
       "stimuli": [
         "voices",
-        "movement",
-        "crowding"
+        "movement"
       ],
       "kind": "self",
       "prior": 0.55,
@@ -445,8 +363,7 @@
         "voices",
         "noise_sudden",
         "interruptions",
-        "movement",
-        "crowding"
+        "movement"
       ],
       "kind": "self",
       "prior": 0.55,
@@ -725,8 +642,7 @@
     {
       "id": "cooler_spot",
       "stimuli": [
-        "too_warm",
-        "humidity"
+        "too_warm"
       ],
       "kind": "self",
       "prior": 0.5,
@@ -793,12 +709,7 @@
         "visual_clutter",
         "movement",
         "interruptions",
-        "smells",
-        "on_my_mind",
-        "plan_changed",
-        "humidity",
-        "crowding",
-        "on_camera"
+        "smells"
       ],
       "kind": "self",
       "prior": 0.35,
@@ -991,354 +902,6 @@
       "why": {
         "es": "En casa controlas el ruido, la luz y las interrupciones.",
         "en": "At home you control the noise, light and interruptions."
-      }
-    },
-    {
-      "id": "two_minute_start",
-      "stimuli": [
-        "hard_to_start"
-      ],
-      "kind": "self",
-      "prior": 0.6,
-      "title": {
-        "es": "Empieza solo por dos minutos",
-        "en": "Start with just two minutes"
-      },
-      "steps": {
-        "es": "Abre el archivo o pon a la mano lo que necesitas y trabaja dos minutos. Después decides si sigues.",
-        "en": "Open the file or get what you need and work for two minutes. Then decide whether to keep going."
-      },
-      "why": {
-        "es": "Empezar suele costar más que seguir. Un comienzo pequeño baja esa barrera.",
-        "en": "Starting is often harder than continuing. A small start lowers that barrier."
-      }
-    },
-    {
-      "id": "easiest_first",
-      "stimuli": [
-        "hard_to_start",
-        "too_many_tasks"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Empieza por lo que te cueste menos",
-        "en": "Start with what costs you least"
-      },
-      "steps": {
-        "es": "Elige lo más fácil o lo que más te guste de tu lista y hazlo primero.",
-        "en": "Pick the easiest thing on your list, or the one you like most, and do it first."
-      },
-      "why": {
-        "es": "Terminar algo pequeño da impulso para lo que sigue.",
-        "en": "Finishing something small gives you momentum for what comes next."
-      }
-    },
-    {
-      "id": "split_checklist",
-      "stimuli": [
-        "hard_to_start",
-        "too_many_tasks",
-        "unclear_task"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Parte la tarea en una lista corta",
-        "en": "Split the task into a short list"
-      },
-      "steps": {
-        "es": "Escribe de tres a cinco pasos pequeños y ve marcándolos.",
-        "en": "Write three to five small steps and check them off as you go."
-      },
-      "why": {
-        "es": "Una lista saca los pasos de tu cabeza y deja ver el siguiente.",
-        "en": "A list gets the steps out of your head and shows you the next one."
-      }
-    },
-    {
-      "id": "pick_three",
-      "stimuli": [
-        "too_many_tasks",
-        "plan_changed"
-      ],
-      "kind": "self",
-      "prior": 0.6,
-      "title": {
-        "es": "Anota tres pendientes y elige uno",
-        "en": "Write three things and pick one"
-      },
-      "steps": {
-        "es": "Escribe hasta tres cosas. Elige una y anota solo su siguiente paso. Lo demás puede esperar.",
-        "en": "Write up to three things. Pick one and note only its next step. The rest can wait."
-      },
-      "why": {
-        "es": "Con pocas cosas a la vista, dejan de competir por tu atención.",
-        "en": "With only a few things in view, they stop competing for your attention."
-      }
-    },
-    {
-      "id": "time_block",
-      "stimuli": [
-        "too_many_tasks",
-        "on_my_mind"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Aparta un rato para una sola cosa",
-        "en": "Set aside time for one thing"
-      },
-      "steps": {
-        "es": "Marca 25 minutos en tu calendario para una tarea y haz una pausa al terminar. Si 25 no te funcionan, cambia el tiempo.",
-        "en": "Block 25 minutes in your calendar for one task and take a break afterwards. If 25 doesn't work for you, change it."
-      },
-      "why": {
-        "es": "Un tiempo marcado protege tu atención de lo que llega de improviso.",
-        "en": "A marked time protects your attention from what comes up unexpectedly."
-      }
-    },
-    {
-      "id": "write_it_out",
-      "stimuli": [
-        "on_my_mind"
-      ],
-      "kind": "self",
-      "prior": 0.6,
-      "title": {
-        "es": "Saca de tu cabeza lo que te da vueltas",
-        "en": "Get what keeps going round out of your head"
-      },
-      "steps": {
-        "es": "Escríbelo en una o dos líneas, como te salga. Nadie más lo va a leer, y aquí no se guarda.",
-        "en": "Write it in one or two lines, however it comes out. Nobody else will read it, and it isn't saved here."
-      },
-      "why": {
-        "es": "Una vez escrito, tu cabeza ya no tiene que sostenerlo.",
-        "en": "Once it's written, your head no longer has to hold on to it."
-      }
-    },
-    {
-      "id": "check_it_out",
-      "stimuli": [
-        "on_my_mind",
-        "unclear_task"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Pregunta para confirmar",
-        "en": "Ask to confirm"
-      },
-      "steps": {
-        "es": "Si te preocupa algo del trabajo, pregúntale a quien lo sabe: \"¿Esto es así o lo entendí mal?\".",
-        "en": "If something at work worries you, ask someone who knows: \"Is this right, or did I misunderstand?\""
-      },
-      "why": {
-        "es": "A veces lo que preocupa no es lo que está pasando. Confirmarlo baja la duda.",
-        "en": "Sometimes what worries you isn't what's actually happening. Confirming it eases the doubt."
-      }
-    },
-    {
-      "id": "transition_pause",
-      "stimuli": [
-        "plan_changed",
-        "on_my_mind"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Date cinco minutos antes de cambiar de tema",
-        "en": "Take five minutes before switching"
-      },
-      "steps": {
-        "es": "Cierra lo que estabas haciendo, anota dónde te quedaste y toma una pausa corta.",
-        "en": "Close what you were doing, note where you left off and take a short break."
-      },
-      "why": {
-        "es": "Pasar de una cosa a otra también gasta energía.",
-        "en": "Moving from one thing to another also uses energy."
-      }
-    },
-    {
-      "id": "new_first_step",
-      "stimuli": [
-        "plan_changed"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Escribe el nuevo primer paso",
-        "en": "Write the new first step"
-      },
-      "steps": {
-        "es": "No hace falta rehacer todo el plan. Anota solo qué sigue ahora.",
-        "en": "You don't need to redo the whole plan. Just note what comes next."
-      },
-      "why": {
-        "es": "Un solo paso claro devuelve parte de lo que era predecible.",
-        "en": "One clear step brings back some of what was predictable."
-      }
-    },
-    {
-      "id": "repeat_back",
-      "stimuli": [
-        "unclear_task"
-      ],
-      "kind": "self",
-      "prior": 0.55,
-      "title": {
-        "es": "Di con tus palabras lo que entendiste",
-        "en": "Say what you understood in your own words"
-      },
-      "steps": {
-        "es": "Escríbelo en una frase y confírmalo con quien te lo pidió.",
-        "en": "Write it in one sentence and check it with whoever asked."
-      },
-      "why": {
-        "es": "Así se aclaran las dudas antes de invertir tiempo.",
-        "en": "This clears up doubts before you put time in."
-      }
-    },
-    {
-      "id": "avoid_peak",
-      "stimuli": [
-        "crowding"
-      ],
-      "kind": "self",
-      "prior": 0.6,
-      "title": {
-        "es": "Evita la hora pico",
-        "en": "Avoid peak times"
-      },
-      "steps": {
-        "es": "Usa el elevador, el baño o el comedor un poco antes o después que los demás.",
-        "en": "Use the elevator, restroom or cafeteria a little before or after everyone else."
-      },
-      "why": {
-        "es": "Con menos gente hay menos ruido, menos olores y menos cosas que atender.",
-        "en": "Fewer people means less noise, fewer smells and less to keep track of."
-      }
-    },
-    {
-      "id": "ventilate",
-      "stimuli": [
-        "humidity"
-      ],
-      "kind": "self",
-      "prior": 0.6,
-      "title": {
-        "es": "Busca aire fresco",
-        "en": "Find fresh air"
-      },
-      "steps": {
-        "es": "Abre una ventana o trabaja un rato en un lugar con mejor ventilación.",
-        "en": "Open a window or work for a while somewhere with better airflow."
-      },
-      "why": {
-        "es": "El aire pesado cansa aunque no lo notes de inmediato.",
-        "en": "Heavy air tires you even if you don't notice it right away."
-      }
-    },
-    {
-      "id": "hide_self_view",
-      "stimuli": [
-        "on_camera"
-      ],
-      "kind": "self",
-      "prior": 0.6,
-      "title": {
-        "es": "Oculta tu propia imagen",
-        "en": "Hide your own video"
-      },
-      "steps": {
-        "es": "En la videollamada, activa \"ocultar mi vista\". Las demás personas te siguen viendo.",
-        "en": "In the video call, turn on \"hide self view\". Other people can still see you."
-      },
-      "why": {
-        "es": "Verte todo el tiempo también ocupa atención.",
-        "en": "Watching yourself all the time also takes attention."
-      }
-    },
-    {
-      "id": "ask_written",
-      "stimuli": [
-        "unclear_task",
-        "plan_changed"
-      ],
-      "kind": "ask",
-      "prior": 0.55,
-      "title": {
-        "es": "Pide las instrucciones por escrito",
-        "en": "Ask for instructions in writing"
-      },
-      "steps": {
-        "es": "Un mensaje con lo que se espera y para cuándo. Sirve para volver a leerlo.",
-        "en": "A message with what's expected and by when. You can read it again whenever you need."
-      },
-      "why": {
-        "es": "Lo escrito no depende de recordar cada detalle de una conversación.",
-        "en": "Written instructions don't depend on remembering every detail of a conversation."
-      }
-    },
-    {
-      "id": "ask_notice_changes",
-      "stimuli": [
-        "plan_changed"
-      ],
-      "kind": "ask",
-      "prior": 0.55,
-      "title": {
-        "es": "Pide que te avisen antes de los cambios",
-        "en": "Ask for notice before changes"
-      },
-      "steps": {
-        "es": "Cuando se pueda, un aviso con anticipación y qué cambia para ti.",
-        "en": "When possible, advance notice and what changes for you."
-      },
-      "why": {
-        "es": "Con tiempo para prepararte, un cambio cuesta menos.",
-        "en": "With time to prepare, a change takes less out of you."
-      }
-    },
-    {
-      "id": "ask_camera_off",
-      "stimuli": [
-        "on_camera"
-      ],
-      "kind": "ask",
-      "prior": 0.55,
-      "title": {
-        "es": "Pide poder apagar la cámara",
-        "en": "Ask to keep your camera off"
-      },
-      "steps": {
-        "es": "En las juntas donde no sea necesaria. Puedes participar por voz o por escrito.",
-        "en": "In meetings where it isn't needed. You can take part by voice or in writing."
-      },
-      "why": {
-        "es": "Menos atención a cómo te ves deja más para la junta.",
-        "en": "Less attention on how you look leaves more for the meeting."
-      }
-    },
-    {
-      "id": "ask_flexible_start",
-      "stimuli": [
-        "crowding"
-      ],
-      "kind": "ask",
-      "prior": 0.55,
-      "title": {
-        "es": "Pide entrar o comer en otro horario",
-        "en": "Ask for a different start or lunch time"
-      },
-      "steps": {
-        "es": "Entrar un poco más tarde evita el transporte lleno. Comer antes evita el comedor lleno.",
-        "en": "Starting a little later avoids crowded transport. Eating earlier avoids a crowded cafeteria."
-      },
-      "why": {
-        "es": "Llegar sin esa carga deja más energía para el trabajo.",
-        "en": "Arriving without that load leaves more energy for work."
       }
     }
   ],
